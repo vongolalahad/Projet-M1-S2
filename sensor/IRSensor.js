@@ -12,7 +12,7 @@ module.exports  = class IRSensor extends Sensor {
     }
 
     // Start the measurement (open the port, add data in csv file)
-    start(config, config_sensor, env, timestamp) {
+    start(config, config_sensor, test_env, env, timestamp) {
         if(this.port === undefined) {
             console.error("this.port is undefined")
             process.exit(1)
@@ -21,9 +21,11 @@ module.exports  = class IRSensor extends Sensor {
             console.error("this.parser is undefined")
             process.exit(1)
         }
-        this.port.open(() => {
-            console.error(`The serial port defined (${this.path}) doesn't exist!`)
-            process.exit(1)
+        this.port.open((err) => {
+            if (err) {
+                console.error(`The serial port defined (${this.path}) doesn't exist!`)
+                process.exit(1)
+            }
         })
 
         this.parser.on('data', (data) => {
@@ -32,6 +34,8 @@ module.exports  = class IRSensor extends Sensor {
             // Add the timestamp in the data
             //......
             data += "\n"
+            // Start measurement algorithm (while tem != ...)
+            //......
             fs.appendFile(`${config_sensor.data_rep}/InfraRed_${timestamp}_temperature${env.temperature}.csv`, data.toString(), (err) => {
                 if (err) console.log(err)
             })

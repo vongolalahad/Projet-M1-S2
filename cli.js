@@ -6,7 +6,7 @@ const configs = {
     stm32_IR: require('./config/stm32_IR'),
     stm32_ultrasound: require('./config/stm32_ultrasound')
 }
-const default_env = require('./environment/Environment').default_env
+const default_test_env = require('./environment/Environment').default_test_env
 require('colors').setTheme({
     title: "blue",
     subtitle: "green",
@@ -62,11 +62,17 @@ function list_default_env() {
 ${colors.title("==================== Default environments ==================")}
 `
     )
-    default_env.forEach(env => {
+    default_test_env.forEach(test => {
         console.log(
-`${colors.key(`Environment ${++i}:`)} ${colors.value(env.toString())}
+`${colors.gray.bold(`===== Test on different ${test.toVary}`)}
 `
         )
+        test.environments.forEach(env => {
+            console.log(
+`      ${colors.key(`Environment ${++i}:`)} ${colors.value(env.toString())}
+`
+            )
+        })
     })
 }
 
@@ -150,7 +156,7 @@ function return_default_config() {
 }
 
 function return_default_env() {
-    return default_env
+    return default_test_env
 }
 
 async function change_ports(configs) {
@@ -265,9 +271,24 @@ async function change_baud_rates(configs) {
     return configs
 }
 
-function exec_command(name, env) {
+function exec_command(name, test_env) {
     let command = commands.get(name)
-    command.execute(env)
+    command.execute(test_env)
+}
+
+async function choose_test_env() {
+    let result = await inquirer.prompt([
+        {
+            type: 'list',
+            name: 'test_env_to_use',
+            message: 'Which property do you want to vary ?',
+            choices: [
+                'temperature',
+                'color',
+            ]
+        }
+    ])
+    return result
 }
 
 async function ask_to_run() {
@@ -297,6 +318,7 @@ module.exports = {
     return_default_config: return_default_config,
     return_default_env: return_default_env,
     ask_to_run: ask_to_run,
-    exec_command: exec_command
+    exec_command: exec_command,
+    choose_test_env: choose_test_env
 
 }

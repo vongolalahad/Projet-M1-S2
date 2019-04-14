@@ -16,18 +16,24 @@ const colors = require('colors/safe')
 module.exports = {
     name: "ls_env",
     description: "List available environments",
-    execute: function (env) {
+    execute: function (test_env) {
         let i = 0
         console.log(
             `
 ${colors.title("==================== Environments ==========================")}
 `
         )
-        env.forEach(environment => {
+        test_env.environments.forEach(test => {
             console.log(
-                `${colors.key(`Environment ${++i}:`)} ${colors.value(environment.toString())}
+`${colors.gray.bold(`===== Test on different ${test.toVary}`)}
 `
             )
+            test.environments.forEach(environment => {
+                console.log(
+`      ${colors.key(`Environment ${++i}:`)} ${colors.value(environment.toString())}
+`
+                )
+            })
         })
     }
 }

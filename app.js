@@ -15,12 +15,12 @@ const ArduinoSensors = require('./sensor/ArduinoSensors')
 
 // return object : {config.config, config.arduino, config.stm32_IR, config.stm32ultra, sensor_used(object of the class)}
 async function run_cli() {
-    let param_to_change, sensor_to_use, configs, execute_command, command_to_execute, sensor_config_to_use, env
+    let param_to_change, sensor_to_use, configs, execute_command, command_to_execute, sensor_config_to_use, test_env, test_env_to_use
 
     cli.list_default_parameter()
     cli.list_default_env()
     configs = cli.return_default_config()
-    env = cli.return_default_env()
+    test_env = cli.return_default_env()
 
     param_to_change = (await cli.ask_parameter_to_change()).change_parameters
 
@@ -33,12 +33,15 @@ async function run_cli() {
     execute_command = (await cli.ask_exec_command()).ask_execute_command
     if (execute_command) {
         command_to_execute = (await cli.command_to_execute()).command_to_exec
-        cli.exec_command(command_to_execute, env)
+        cli.exec_command(command_to_execute, test_env)
         while ((await cli.ask_exec_another_command()).ask_execute_command) {
             command_to_execute = (await cli.command_to_execute()).command_to_exec
-            cli.exec_command(command_to_execute, env)
+            cli.exec_command(command_to_execute, test_env)
         }
     }
+
+    test_env_to_use = (await cli.choose_test_env()).test_env_to_use
+    test_env_to_use = test_env.find(test => { return test.toVary === test_env_to_use })
 
     sensor_to_use = (await cli.ask_sensor_to_use()).sensor_to_use
     if (sensor_to_use === "Infra red") {
@@ -50,32 +53,29 @@ async function run_cli() {
         sensor_config_to_use = configs.stm_ultrasound_config
     }
 
-    return { config:configs.config, arduino_config:configs.arduino_config, sensor_config:sensor_config_to_use, sensor:sensor_to_use, env: env }
+    return { config:configs.config, arduino_config:configs.arduino_config, sensor_config:sensor_config_to_use, sensor:sensor_to_use, test_env: test_env_to_use }
 }
 
 async function main() {
     let timestamp
 
-    const { config, arduino_config, sensor_config, sensor, env} = await run_cli()
+    const { config, arduino_config, sensor_config, sensor, test_env} = await run_cli()
     do {
         
     } while (!(await cli.ask_to_run()).ask_start_test)
     //let sens = new IRSensor("/dev/ttyACM0", { baudRate: 115200 })
     let arduino_sensors = new ArduinoSensors()
 
-    for (let i = 0; i < env.length; i++) {
-        // Start measurement algorithm
-        //......
+    for (let i = 0; i < test_env.environments.length; i++) {
+
         timestamp = Date.now()
-        sensor.start(config, sensor_config, env[i], timestamp)
-        console.log("dasdsds")
+        console.log(colors.white(`\nYou have ${config.timeout} seconds to change the ${test_env.toVary} to ${test_env.toVary === "temperature" ? test_env.environments[i].temperature : test_env.environments[i].color }. If not, the test will stop!`))
+        sensor.start(config, sensor_config, test_env, test_env.environments[i], timestamp)
         arduino_sensors.start(arduino_config, timestamp)
+        console.log(colors.measurement(`Start measuring the distance with temperature=${test_env.environments[i].temperature} it will take ${config.measurementTime} seconds`))
         await timeout(config.measurementTime*1000)
 
-        console.log(colors.measurement(`\nStart measuring the distance with temperature=${env[i].temperature} it will take ${config.measurementTime} seconds`))
-        console.log(colors.white(`You have ${config.timeout} seconds for changing the temperature. If not, the test will stop!`))
-
-        console.log(colors.measurement(`The measurement of the distance at temperature=${env[i].temperature} is finished...\n`))
+        console.log(colors.measurement(`The measurement of the distance at temperature=${test_env.environments[i].temperature} is finished...\n`))
         sensor.stop()
         arduino_sensors.stop()
         await timeout(2000)

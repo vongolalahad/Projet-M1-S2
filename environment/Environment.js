@@ -1,5 +1,7 @@
 "use strict"
 
+const Test = require('./Test')
+
 class Environment {
 
     constructor(temperature, color, lux) {
@@ -23,26 +25,35 @@ class Environment {
         return this._lux
     }
 
-    get toVary() {
-        return this._toVary
-    }
-
     toString() {
         return `[ Environment: id=${this._id} temperature=${this.temperature}, color=${this.color}, lux=${this.lux} ]`
     }
 
 }
 
-const default_env = [
-    new Environment(-30, null, null, "temperature"),
-    new Environment(-15, null, null, "temperature"),
-    new Environment(0, null, null, "temperature"),
-    new Environment(15, null, null, "temperature"),
-    new Environment(30, null, null, "temperature"),
-    new Environment(45, null, null, "temperature")
+const default_temperature_env = [
+    new Environment(-30, null, null),
+    new Environment(-15, null, null),
+    new Environment(0, null, null),
+    new Environment(15, null, null),
+    new Environment(30, null, null),
+    new Environment(45, null, null)
+]
+
+const default_color_env = [
+    new Environment(null, "red", null),
+    new Environment(null, "green", null),
+    new Environment(null, "blue", null),
+    new Environment(null, "white", null),
+    new Environment(null, "yellow", null),
+]
+
+const default_test_env = [
+    new Test("temperature", default_temperature_env),
+    new Test("color", default_color_env)
 ]
 
 module.exports = {
     Environment: Environment,
-    default_env: default_env
+    default_test_env: default_test_env
 }
