@@ -23,11 +23,15 @@ module.exports = class Sensor {
      * param: config
      */
     start(config, config_sensor, env, timestamp) {
-        return
+
+    }
+
+    stop() {
+        this.port.close()
     }
 
     parse() {
-        return
+
     }
 
 }

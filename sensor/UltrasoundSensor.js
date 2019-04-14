@@ -32,6 +32,10 @@ module.exports = class UltrasoundSensor extends Sensor{
         })
     }
 
+    stop() {
+
+    }
+
     parse() {
         return this.port.pipe(new Ready({ delimiter: '\n\r' })).pipe(new Readline({ delimiter: '\n\r' }))
     }

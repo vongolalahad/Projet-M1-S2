@@ -1,6 +1,13 @@
 "use strict"
 
 const colors = require("colors/safe")
+require('colors').setTheme({
+    title: "blue",
+    subtitle: "green",
+    key: "white",
+    value: "yellow",
+    measurement: ["white", "bold"]
+})
 const cli = require('./cli')
 const IRSensor = require('./sensor/IRSensor')
 const UltrasoundSensor = require('./sensor/UltrasoundSensor')
@@ -55,10 +62,28 @@ async function main() {
     } while (!(await cli.ask_to_run()).ask_start_test)
     //let sens = new IRSensor("/dev/ttyACM0", { baudRate: 115200 })
     let arduino_sensors = new ArduinoSensors()
-    env.forEach(environment => {
+
+    for (let i = 0; i < env.length; i++) {
+        console.log(colors.measurement(`\nStart measuring the distance with temperature=${env[i].temperature} it will take ${config.measurementTime} seconds`))
+        console.log(colors.white(`You have ${config.timeout} seconds for changing the temperature. If not, the test will stop!`))
+        // Start measurement algorithm
+        //......
         timestamp = Date.now()
-        sensor.start(config, sensor_config, environment, timestamp)
+        sensor.start(config, sensor_config, env[i], timestamp)
         arduino_sensors.start(arduino_config, timestamp)
+        await timeout(config.measurementTime*1000)
+        console.log(colors.measurement(`The measurement of the distance at temperature=${env[i].temperature} is finished...\n`))
+        sensor.stop()
+        arduino_sensors.stop()
+        await timeout(2000)
+    }
+}
+
+function timeout(time) {
+    return new Promise( (resolve, reject) => {
+        setTimeout(()=>{
+            resolve("finish")
+        },time)
     })
 }
 

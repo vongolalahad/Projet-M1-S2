@@ -21,17 +21,16 @@ module.exports  = class IRSensor extends Sensor {
             console.error("this.parser is undefined")
             process.exit(1)
         }
-        this.port.open((err)=>{
-            console.error(err)
-        })
-        this.port.on('open', ()=> {
-            this.parser.on('data', (data) => {
-                let count = data.toString().split(',').length
-                if (count !== 4) return
-                data += "\n"
-                fs.appendFile(`${config_sensor.data_rep}/InfraRed_${timestamp}_temperature${env.temperature}.csv`, data.toString(), (err) => {
-                    if (err) console.log(err)
-                })
+        this.port.open()
+
+        this.parser.on('data', (data) => {
+            let count = data.toString().split(',').length
+            if (count !== 4) return
+            // Add the timestamp in the data
+            //......
+            data += "\n"
+            fs.appendFile(`${config_sensor.data_rep}/InfraRed_${timestamp}_temperature${env.temperature}.csv`, data.toString(), (err) => {
+                if (err) console.log(err)
             })
         })
     }

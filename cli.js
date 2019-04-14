@@ -11,7 +11,8 @@ require('colors').setTheme({
     title: "blue",
     subtitle: "green",
     key: "white",
-    value: "yellow"
+    value: "yellow",
+    measurement: ["white", "bold"]
 })
 const colors = require('colors/safe')
 const inquirer = require('inquirer')
@@ -153,11 +154,7 @@ function return_default_env() {
 }
 
 async function change_ports(configs) {
-    let ports = []
-    let ports_available = await SerialPort.list()
-    ports_available.forEach(port => {
-        ports.push(port.comName)
-    })
+    let ports = (await SerialPort.list()).map(port => port.comName)
     let port_to_change
     let question = [
         {

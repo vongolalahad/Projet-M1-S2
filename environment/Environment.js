@@ -28,7 +28,7 @@ class Environment {
     }
 
     toString() {
-        return `[ Environment: id: ${this._id} temperature=${this.temperature}, color=${this.color}, lux=${this.lux} ]`
+        return `[ Environment: id=${this._id} temperature=${this.temperature}, color=${this.color}, lux=${this.lux} ]`
     }
 
 }

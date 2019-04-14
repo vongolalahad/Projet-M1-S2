@@ -9,4 +9,8 @@ module.exports  = class ArduinoSensors  {
     start(config, config_sensor, timestamp) {
 
     }
+
+    stop(){
+
+    }
 }

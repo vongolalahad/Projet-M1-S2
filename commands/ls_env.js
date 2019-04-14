@@ -4,7 +4,8 @@ require('colors').setTheme({
     title: "blue",
     subtitle: "green",
     key: "white",
-    value: "yellow"
+    value: "yellow",
+    measurement: ["white", "bold"]
 })
 const colors = require('colors/safe')
 
