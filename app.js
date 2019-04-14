@@ -64,14 +64,17 @@ async function main() {
     let arduino_sensors = new ArduinoSensors()
 
     for (let i = 0; i < env.length; i++) {
-        console.log(colors.measurement(`\nStart measuring the distance with temperature=${env[i].temperature} it will take ${config.measurementTime} seconds`))
-        console.log(colors.white(`You have ${config.timeout} seconds for changing the temperature. If not, the test will stop!`))
         // Start measurement algorithm
         //......
         timestamp = Date.now()
         sensor.start(config, sensor_config, env[i], timestamp)
+        console.log("dasdsds")
         arduino_sensors.start(arduino_config, timestamp)
         await timeout(config.measurementTime*1000)
+
+        console.log(colors.measurement(`\nStart measuring the distance with temperature=${env[i].temperature} it will take ${config.measurementTime} seconds`))
+        console.log(colors.white(`You have ${config.timeout} seconds for changing the temperature. If not, the test will stop!`))
+
         console.log(colors.measurement(`The measurement of the distance at temperature=${env[i].temperature} is finished...\n`))
         sensor.stop()
         arduino_sensors.stop()

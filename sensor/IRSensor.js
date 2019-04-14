@@ -21,7 +21,10 @@ module.exports  = class IRSensor extends Sensor {
             console.error("this.parser is undefined")
             process.exit(1)
         }
-        this.port.open()
+        this.port.open(() => {
+            console.error(`The serial port defined (${this.path}) doesn't exist!`)
+            process.exit(1)
+        })
 
         this.parser.on('data', (data) => {
             let count = data.toString().split(',').length
