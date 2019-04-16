@@ -46,7 +46,7 @@ module.exports = class UltrasoundSensor extends Sensor{
         this.parser.on('data', (data) => {
             data = data.slice(0, data.length - 2)
             data = Buffer.concat([new Buffer(Date.now().toString()), new Buffer([0x2c]), data, new Buffer([0x0a])])
-            console.log(UltrasoundSensor.count_occurrence(data))
+            //console.log(UltrasoundSensor.count_occurrence(data))
             if (UltrasoundSensor.count_occurrence(data) !== 4) return
             // Start measurement algorithm
             //....
