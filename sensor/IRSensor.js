@@ -8,8 +8,8 @@ const Sensor = require('./Sensor')
 
 module.exports  = class IRSensor extends Sensor {
 
-    constructor(path, config) {
-        super(path, config)
+    constructor(path, config, type) {
+        super(path, config, type)
     }
 
     // Start the measurement (open the port, add data in csv file)
@@ -30,14 +30,13 @@ module.exports  = class IRSensor extends Sensor {
         })
 
         this.parser.on('data', (data) => {
-            console.log(arduino_sensor)
-            process.exit(1)
             data = Date.now() + ", " + data
             let count = data.toString().split(',').length
             if (count !== 5) return
             data += "\n"
             // Start measurement algorithm (while tem != ...)
             //......
+            console.log(colors.white(`\nYou have ${config.timeout} seconds to change the ${test_env.toVary} to ${test_env.toVary === "temperature" ? env.temperature : env.color }. If not, the test will stop!`))
             let bar = new Progress('[:bar] :current secs/:total', {total: config.timeout})
             let timer = setInterval(() => {
                 bar.tick()

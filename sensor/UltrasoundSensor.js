@@ -9,8 +9,8 @@ const Sensor = require('./Sensor')
 
 module.exports = class UltrasoundSensor extends Sensor{
 
-    constructor(path, config) {
-        super(path, config)
+    constructor(path, config, type) {
+        super(path, config, type)
     }
 
     static count_occurrence(buff) {
@@ -44,14 +44,13 @@ module.exports = class UltrasoundSensor extends Sensor{
         })
 
         this.parser.on('data', (data) => {
-            process.exit(1)
             data = data.slice(0, data.length - 2)
             data = Buffer.concat([new Buffer(Date.now().toString()), new Buffer([0x2c]), data, new Buffer([0x0a])])
             console.log(UltrasoundSensor.count_occurrence(data))
             if (UltrasoundSensor.count_occurrence(data) !== 5) return
             // Start measurement algorithm
             //....
-
+            console.log(colors.white(`\nYou have ${config.timeout} seconds to change the ${test_env.toVary} to ${test_env.toVary === "temperature" ? env.temperature : env.color }. If not, the test will stop!`))
             let bar = new Progress('[:bar] :current secs/:total', {total: config.timeout})
             let timer = setInterval(() => {
                 bar.tick()

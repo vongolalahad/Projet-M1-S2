@@ -5,10 +5,15 @@ const Ready = SerialPort.parsers.Ready
 
 module.exports = class Sensor {
 
-    constructor(path, config) {
+    constructor(path, config, type) {
+        this._type = type
         this._path = path
         this._port = new SerialPort(path, { baudRate: config.baudRate, autoOpen: false })
         this._parser = this.parse()
+    }
+
+    get type() {
+        return this._type
     }
 
     get path() {

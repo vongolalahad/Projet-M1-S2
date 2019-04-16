@@ -45,11 +45,11 @@ async function run_cli() {
 
     sensor_to_use = (await cli.ask_sensor_to_use()).sensor_to_use
     if (sensor_to_use === "Infra red") {
-        sensor_to_use = new IRSensor(configs.stm_ir_config.port, configs.stm_ir_config)
+        sensor_to_use = new IRSensor(configs.stm_ir_config.port, configs.stm_ir_config, "InfraRed")
         sensor_config_to_use = configs.stm_ir_config
     }
     if (sensor_to_use === "Ultra sound") {
-        sensor_to_use = new UltrasoundSensor(configs.stm_ultrasound_config.port, configs.stm_ultrasound_config)
+        sensor_to_use = new UltrasoundSensor(configs.stm_ultrasound_config.port, configs.stm_ultrasound_config, "Ultrasound")
         sensor_config_to_use = configs.stm_ultrasound_config
     }
 
@@ -65,17 +65,10 @@ async function main() {
     } while (!(await cli.ask_to_run()).ask_start_test)
     let arduino_sensors = new ArduinoSensors(arduino_config.port, arduino_config)
 
-    arduino_sensors.startStream()
-//        console.log(arduino_sensors.port.read(5))
-    arduino_sensors.parser.on('data', data => {
-        console.log(data.toString())
-    })
     for (let i = 0; i < test_env.environments.length; i++) {
+        arduino_sensors.openPort()
 
-        /*
-        process.exit(1)
         timestamp = Date.now()
-        console.log(colors.white(`\nYou have ${config.timeout} seconds to change the ${test_env.toVary} to ${test_env.toVary === "temperature" ? test_env.environments[i].temperature : test_env.environments[i].color }. If not, the test will stop!`))
         await sensor.start(config, sensor_config, test_env, test_env.environments[i], timestamp, arduino_sensors)
         arduino_sensors.start(arduino_config, timestamp)
         console.log(colors.measurement(`Start measuring the distance with ${test_env.toVary}=${test_env.toVary === "temperature" ? test_env.environments[i].temperature : test_env.environments[i].color } it will take ${config.measurementTime} seconds`))
@@ -84,7 +77,7 @@ async function main() {
         console.log(colors.measurement(`The measurement of the distance with ${test_env.toVary}=${test_env.toVary === "temperature" ? test_env.environments[i].temperature : test_env.environments[i].color } is finished...\n`))
         sensor.stop()
         arduino_sensors.stop()
-        await timer(2000)*/
+        await timer(2000)
     }
 }
 
@@ -97,7 +90,3 @@ function timer(time) {
 }
 
 main()
-
-module.exports = {
-    timer: timer,
-}
