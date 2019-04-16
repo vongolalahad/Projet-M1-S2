@@ -2,6 +2,7 @@ const SerialPort = require('serialport')
 const Readline = SerialPort.parsers.Readline
 const Ready = SerialPort.parsers.Ready
 const fs = require('fs')
+const Progress = require('progress')
 
 const Sensor = require('./Sensor')
 
@@ -12,7 +13,7 @@ module.exports  = class IRSensor extends Sensor {
     }
 
     // Start the measurement (open the port, add data in csv file)
-    start(config, config_sensor, test_env, env, timestamp) {
+    async start(config, config_sensor, test_env, env, timestamp, arduino_sensor) {
         if(this.port === undefined) {
             console.error("this.port is undefined")
             process.exit(1)
@@ -23,20 +24,31 @@ module.exports  = class IRSensor extends Sensor {
         }
         this.port.open((err) => {
             if (err) {
-                console.error(`The serial port defined (${this.path}) doesn't exist!`)
+                console.error(err)
                 process.exit(1)
             }
         })
 
         this.parser.on('data', (data) => {
+            console.log(arduino_sensor)
+            process.exit(1)
+            data = Date.now() + ", " + data
             let count = data.toString().split(',').length
-            if (count !== 4) return
-            // Add the timestamp in the data
-            //......
+            if (count !== 5) return
             data += "\n"
             // Start measurement algorithm (while tem != ...)
             //......
-            fs.appendFile(`${config_sensor.data_rep}/InfraRed_${timestamp}_temperature${env.temperature}.csv`, data.toString(), (err) => {
+            let bar = new Progress('[:bar] :current secs/:total', {total: config.timeout})
+            let timer = setInterval(() => {
+                bar.tick()
+                if (bar.complete) {
+                    clearInterval(timer)
+                }
+            }, 1000)
+            let checking = setInterval(() => {
+
+            }, 1000)
+            fs.appendFile(`${config_sensor.data_rep}/InfraRed_${timestamp}_${test_env.toVary}${env.temperature}.csv`, data.toString(), (err) => {
                 if (err) console.log(err)
             })
         })

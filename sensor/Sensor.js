@@ -27,7 +27,7 @@ module.exports = class Sensor {
      * Starting test for this sensor
      * param: config
      */
-    start(config, config_sensor, env, timestamp) {
+    async start(config, config_sensor, env, timestamp) {
 
     }
 
@@ -37,6 +37,15 @@ module.exports = class Sensor {
 
     parse() {
 
+    }
+
+    async timer(time, clear) {
+        return new Promise( (resolve, reject) => {
+            setTimeout(()=>{
+                clearTimeout(clear)
+                resolve("finish")
+            },time)
+        })
     }
 
 }
