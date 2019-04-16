@@ -37,7 +37,7 @@ module.exports  = class IRSensor extends Sensor {
             // Start measurement algorithm (while tem != ...)
             //......
             console.log(colors.white(`\nYou have ${config.timeout} seconds to change the ${test_env.toVary} to ${test_env.toVary === "temperature" ? env.temperature : env.color }. If not, the test will stop!`))
-            let bar = new Progress('[:bar] :current secs/:total', {total: config.timeout})
+            /*let bar = new Progress('[:bar] :current secs/:total', {total: config.timeout})
             let timer = setInterval(() => {
                 bar.tick()
                 if (bar.complete) {
@@ -45,8 +45,13 @@ module.exports  = class IRSensor extends Sensor {
                 }
             }, 1000)
             let checking = setInterval(() => {
-
-            }, 1000)
+                let promise = new Promise( (resolve, reject) => {
+                    timer = setTimeout(()=>{
+                        clearTimeout(clear)
+                        resolve("finish")
+                    },time)
+                })
+            }, 1000)*/
             fs.appendFile(`${config_sensor.data_rep}/InfraRed_${timestamp}_${test_env.toVary}${env.temperature}.csv`, data.toString(), (err) => {
                 if (err) console.log(err)
             })

@@ -16,3 +16,7 @@ port.open(err => {
 parser.on('data', data => {
     console.log(data)
 })
+
+
+/// Test the paused mode
+//this.port.pause()   // paused mode

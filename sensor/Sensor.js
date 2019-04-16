@@ -32,7 +32,7 @@ module.exports = class Sensor {
      * Starting test for this sensor
      * param: config
      */
-    async start(config, config_sensor, env, timestamp) {
+    async start(config, config_sensor, test_env, env, timestamp, arduino_sensor) {
 
     }
 
