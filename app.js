@@ -71,7 +71,7 @@ async function main() {
         timestamp = Date.now()
         await checking(config, test_env, test_env.environments[i])
         await sensor.start(config, sensor_config, test_env, test_env.environments[i], timestamp, arduino_sensors)
-        arduino_sensors.start(config, arduino_config, test_env, test_env.environments[i], timestamp, sensor)
+        arduino_sensors.start(config, arduino_config, test_env, test_env.environments[i], timestamp, sensor, i)
         console.log(colors.measurement(`Start measuring the distance with ${test_env.toVary}=${test_env.toVary === "temperature" ? test_env.environments[i].temperature : test_env.environments[i].color } it will take ${config.measurementTime} seconds`))
         await timer(config.measurementTime*1000)
 

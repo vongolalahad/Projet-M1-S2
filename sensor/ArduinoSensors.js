@@ -42,7 +42,7 @@ module.exports  = class ArduinoSensors  {
         })
     }
 
-    start(config, config_arduino, test_env, env, timestamp, current_sensor) {
+    start(config, config_arduino, test_env, env, timestamp, current_sensor, count) {
         if(this.port === undefined) {
             console.error("this.port is undefined")
             process.exit(1)
@@ -58,11 +58,13 @@ module.exports  = class ArduinoSensors  {
             fs.appendFile(`${config_arduino.data_rep}/${current_sensor.type}_${timestamp}_${test_env.toVary}${test_env.toVary === "temperature" ? env.temperature : env.color }.csv`, data.toString(), (err) => {
                 if (err) console.log(err)
             })
+            console.log(count, data)
         })
     }
 
     stop(){
         this.port.close()
+        this.parser.removeAllListeners('data')
     }
 
     parse() {
