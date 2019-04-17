@@ -38,6 +38,7 @@ module.exports = class Sensor {
 
     stop() {
         this.port.close()
+        this.parser.removeAllListeners('data')
     }
 
     parse() {
