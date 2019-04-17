@@ -13,7 +13,7 @@ module.exports  = class IRSensor extends Sensor {
     }
 
     // Start the measurement (open the port, add data in csv file)
-    async start(config, config_sensor, test_env, env, timestamp, arduino_sensor) {
+    async start(config, config_sensor, test_env, env, timestamp) {
         if(this.port === undefined) {
             console.error("this.port is undefined")
             process.exit(1)
@@ -36,7 +36,7 @@ module.exports  = class IRSensor extends Sensor {
             data += "\n"
             // Start measurement algorithm (while tem != ...)
             //......
-            console.log(colors.white(`\nYou have ${config.timeout} seconds to change the ${test_env.toVary} to ${test_env.toVary === "temperature" ? env.temperature : env.color }. If not, the test will stop!`))
+
             /*let bar = new Progress('[:bar] :current secs/:total', {total: config.timeout})
             let timer = setInterval(() => {
                 bar.tick()

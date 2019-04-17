@@ -62,10 +62,10 @@ module.exports  = class ArduinoSensors  {
     }
 
     stop(){
-        this.port.stop()
+        this.port.close()
     }
 
     parse() {
-        return this.port.pipe(new Ready({ delimiter: new Buffer([0x0a]) })).pipe(new ByteLength({ length: 30 }))
+        return this.port.pipe(new Ready({ delimiter: new Buffer([0x0a]) })).pipe(new ByteLength({ length: 32 }))
     }
 }

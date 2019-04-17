@@ -1,5 +1,4 @@
 const SerialPort = require('serialport')
-const Readline = SerialPort.parsers.Readline
 const Ready = SerialPort.parsers.Ready
 const ByteLength = SerialPort.parsers.ByteLength
 const fs = require('fs')
@@ -23,11 +22,7 @@ module.exports = class UltrasoundSensor extends Sensor{
     }
 
     // Start the measurement (open the port, add data in csv file)
-    async start(config, config_sensor, test_env, env, timestamp, arduino_sensors) {
-        console.log(config)
-        console.log(config_sensor)
-        console.log(test_env)
-        console.log(env)
+    async start(config, config_sensor, test_env, env, timestamp) {
         if(this.port === undefined) {
             console.error("this.port is undefined")
             process.exit(1)
@@ -50,7 +45,6 @@ module.exports = class UltrasoundSensor extends Sensor{
             if (UltrasoundSensor.count_occurrence(data) !== 4) return
             // Start measurement algorithm
             //....
-            console.log(colors.white(`\nYou have ${config.timeout} seconds to change the ${test_env.toVary} to ${test_env.toVary === "temperature" ? env.temperature : env.color }. If not, the test will stop!`))
             /*let bar = new Progress('[:bar] :current secs/:total', {total: config.timeout})
             let timer = setInterval(() => {
                 bar.tick()

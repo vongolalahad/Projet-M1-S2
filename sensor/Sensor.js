@@ -32,7 +32,7 @@ module.exports = class Sensor {
      * Starting test for this sensor
      * param: config
      */
-    async start(config, config_sensor, test_env, env, timestamp, arduino_sensor) {
+    async start(config, config_sensor, test_env, env, timestamp) {
 
     }
 
@@ -44,7 +44,7 @@ module.exports = class Sensor {
 
     }
 
-    async timer(time, clear) {
+    async timer(time) {
         return new Promise( (resolve, reject) => {
             setTimeout(()=>{
                 clearTimeout(clear)

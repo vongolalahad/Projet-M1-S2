@@ -69,8 +69,9 @@ async function main() {
         arduino_sensors.openPort()
 
         timestamp = Date.now()
+        await checking(config, test_env, test_env.environments[i])
         await sensor.start(config, sensor_config, test_env, test_env.environments[i], timestamp, arduino_sensors)
-        arduino_sensors.start(arduino_config, timestamp)
+        arduino_sensors.start(config, arduino_config, test_env, test_env.environments[i], timestamp, sensor)
         console.log(colors.measurement(`Start measuring the distance with ${test_env.toVary}=${test_env.toVary === "temperature" ? test_env.environments[i].temperature : test_env.environments[i].color } it will take ${config.measurementTime} seconds`))
         await timer(config.measurementTime*1000)
 
@@ -79,6 +80,11 @@ async function main() {
         arduino_sensors.stop()
         await timer(2000)
     }
+}
+
+async function checking(config, test_env, env) {
+    console.log(colors.white(`\nYou have ${config.timeout} seconds to change the ${test_env.toVary} to ${test_env.toVary === "temperature" ? env.temperature : env.color }. If not, the test will stop!`))
+    await timer(config.timeout*1000)
 }
 
 function timer(time) {
