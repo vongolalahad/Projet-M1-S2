@@ -52,7 +52,7 @@ module.exports  = class IRSensor extends Sensor {
                     },time)
                 })
             }, 1000)*/
-            fs.appendFile(`${config_sensor.data_rep}/InfraRed_${timestamp}_${test_env.toVary}${env.temperature}.csv`, data.toString(), (err) => {
+            fs.appendFile(`${config_sensor.data_rep}/InfraRed_${timestamp}_${test_env.toVary}${Sensor.getValue(test_env, env)}.csv`, data.toString(), (err) => {
                 if (err) console.log(err)
             })
         })
