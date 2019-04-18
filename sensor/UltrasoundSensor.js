@@ -55,7 +55,7 @@ module.exports = class UltrasoundSensor extends Sensor{
             let checking = setInterval(() => {
 
             }, 1000)*/
-            fs.appendFile(`${config_sensor.data_rep}/Ultrasound_${timestamp}_${test_env.toVary}${test_env.toVary === "temperature" ? env.temperature : env.color }.csv`, data.toString(), (err) => {
+            fs.appendFile(`${config_sensor.data_rep}/Ultrasound_${timestamp}_${test_env.toVary}${ Sensor.getValue(test_env, env) }.csv`, data.toString(), (err) => {
                 if (err) console.log(err)
             })
         })

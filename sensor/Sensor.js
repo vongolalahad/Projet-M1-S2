@@ -45,6 +45,23 @@ module.exports = class Sensor {
 
     }
 
+    static getValue(test_env, env) {
+        switch (test_env.toVary) {
+            case "temperature":
+                return env.temperature
+            case "color":
+                return env.color
+            case "surface":
+                return env.surface
+            case "lux":
+                return env.lux
+            case "humidity":
+                return env.humidity
+            default:
+                return "null"
+        }
+    }
+
     async timer(time) {
         return new Promise( (resolve, reject) => {
             setTimeout(()=>{

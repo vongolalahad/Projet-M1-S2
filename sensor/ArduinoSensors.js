@@ -1,6 +1,6 @@
 const SerialPort = require('serialport')
 const Ready = SerialPort.parsers.Ready
-const ByteLength = SerialPort.parsers.ByteLength
+const Readline = SerialPort.parsers.Readline
 
 const fs = require('fs')
 
@@ -53,9 +53,10 @@ module.exports  = class ArduinoSensors  {
         }
 
         this.parser.on('data', data => {
-            data = Buffer.concat([new Buffer(Date.now().toString()), new Buffer([0x2c]), data])
+            data = Buffer.concat([new Buffer(Date.now().toString()), new Buffer([0x2c]), new Buffer(data)])
             if (ArduinoSensors.count_occurrence(data) !== 6) return
-            fs.appendFile(`${config_arduino.data_rep}/${current_sensor.type}_${timestamp}_${test_env.toVary}${test_env.toVary === "temperature" ? env.temperature : env.color }.csv`, data.toString(), (err) => {
+            data += '\n'
+            fs.appendFile(`${config_arduino.data_rep}/${current_sensor.type}_${timestamp}_${test_env.toVary}${ ArduinoSensors.getValue(test_env, env) }.csv`, data.toString(), (err) => {
                 if (err) console.log(err)
             })
         })
@@ -66,7 +67,24 @@ module.exports  = class ArduinoSensors  {
         this.parser.removeAllListeners('data')
     }
 
+    static getValue(test_env, env) {
+        switch (test_env.toVary) {
+            case "temperature":
+                return env.temperature
+            case "color":
+                return env.color
+            case "surface":
+                return env.surface
+            case "lux":
+                return env.lux
+            case "humidity":
+                return env.humidity
+            default:
+                return "null"
+        }
+    }
+
     parse() {
-        return this.port.pipe(new Ready({ delimiter: new Buffer([0x0a]) })).pipe(new ByteLength({ length: 32 }))
+        return this.port.pipe(new Ready({ delimiter: new Buffer([0x0a]) })).pipe(new Readline({ delimiter: '\n' }))
     }
 }

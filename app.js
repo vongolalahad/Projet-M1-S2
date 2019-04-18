@@ -72,10 +72,10 @@ async function main() {
         await checking(config, test_env, test_env.environments[i])
         await sensor.start(config, sensor_config, test_env, test_env.environments[i], timestamp, arduino_sensors)
         arduino_sensors.start(config, arduino_config, test_env, test_env.environments[i], timestamp, sensor, i)
-        console.log(colors.measurement(`Start measuring the distance with ${test_env.toVary}=${test_env.toVary === "temperature" ? test_env.environments[i].temperature : test_env.environments[i].color } it will take ${config.measurementTime} seconds`))
+        console.log(colors.measurement(`Start measuring the distance with ${test_env.toVary}=${ getValue(test_env, test_env.environments[i]) } it will take ${config.measurementTime} seconds`))
         await timer(config.measurementTime*1000)
 
-        console.log(colors.measurement(`The measurement of the distance with ${test_env.toVary}=${test_env.toVary === "temperature" ? test_env.environments[i].temperature : test_env.environments[i].color } is finished...\n`))
+        console.log(colors.measurement(`The measurement of the distance with ${test_env.toVary}=${ getValue(test_env, test_env.environments[i]) } is finished...\n`))
         sensor.stop()
         arduino_sensors.stop()
         await timer(2000)
@@ -83,7 +83,7 @@ async function main() {
 }
 
 async function checking(config, test_env, env) {
-    console.log(colors.white(`\nYou have ${config.timeout} seconds to change the ${test_env.toVary} to ${test_env.toVary === "temperature" ? env.temperature : env.color }. If not, the test will stop!`))
+    console.log(colors.white(`\nYou have ${config.timeout} seconds to change the ${test_env.toVary} to ${ getValue(test_env, env) }. If not, the test will stop!`))
     await timer(config.timeout*1000)
 }
 
@@ -93,6 +93,23 @@ function timer(time) {
             resolve("finish")
         },time)
     })
+}
+
+function getValue(test_env, env) {
+    switch (test_env.toVary) {
+        case "temperature":
+            return env.temperature
+        case "color":
+            return env.color
+        case "surface":
+            return env.surface
+        case "lux":
+            return env.lux
+        case "humidity":
+            return env.humidity
+        default:
+            return "null"
+    }
 }
 
 main()

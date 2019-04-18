@@ -285,6 +285,7 @@ async function choose_test_env() {
             choices: [
                 'temperature',
                 'color',
+                "surface"
             ]
         }
     ])
