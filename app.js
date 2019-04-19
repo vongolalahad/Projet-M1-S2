@@ -33,10 +33,10 @@ async function run_cli() {
     execute_command = (await cli.ask_exec_command()).ask_execute_command
     if (execute_command) {
         command_to_execute = (await cli.command_to_execute()).command_to_exec
-        cli.exec_command(command_to_execute, test_env)
+        await cli.exec_command(command_to_execute, test_env, configs)
         while ((await cli.ask_exec_another_command()).ask_execute_command) {
             command_to_execute = (await cli.command_to_execute()).command_to_exec
-            cli.exec_command(command_to_execute, test_env)
+            await cli.exec_command(command_to_execute, test_env, configs)
         }
     }
 
@@ -58,12 +58,17 @@ async function run_cli() {
 
 async function main() {
     let timestamp
+    let use_arduino
+    let arduino_sensors
 
     const { config, arduino_config, sensor_config, sensor, test_env} = await run_cli()
     do {
         
     } while (!(await cli.ask_to_run()).ask_start_test)
-    let arduino_sensors = new ArduinoSensors(arduino_config.port, arduino_config)
+
+    use_arduino = (await cli.ask_to_use_arduino()).ask_use_arduino
+    if (use_arduino)
+        use_arduino = new ArduinoSensors(arduino_config.port, arduino_config)
 
     for (let i = 0; i < test_env.environments.length; i++) {
         arduino_sensors.openPort()
@@ -71,13 +76,13 @@ async function main() {
         timestamp = Date.now()
         await checking(config, test_env, test_env.environments[i])
         await sensor.start(config, sensor_config, test_env, test_env.environments[i], timestamp, arduino_sensors)
-        arduino_sensors.start(config, arduino_config, test_env, test_env.environments[i], timestamp, sensor, i)
+        arduino_sensors !== undefined ? arduino_sensors.start(config, arduino_config, test_env, test_env.environments[i], timestamp, sensor, i) :
         console.log(colors.measurement(`Start measuring the distance with ${test_env.toVary}=${ getValue(test_env, test_env.environments[i]) } it will take ${config.measurementTime} seconds`))
         await timer(config.measurementTime*1000)
 
         console.log(colors.measurement(`The measurement of the distance with ${test_env.toVary}=${ getValue(test_env, test_env.environments[i]) } is finished...\n`))
         sensor.stop()
-        arduino_sensors.stop()
+        arduino_sensors !== undefined ? arduino_sensors.stop() :
         await timer(2000)
     }
 }

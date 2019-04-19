@@ -3,6 +3,7 @@ const Ready = SerialPort.parsers.Ready
 const ByteLength = SerialPort.parsers.ByteLength
 const fs = require('fs')
 let Progress = require('progress')
+const createCsvWriter = require('csv-writer').createObjectCsvWriter
 
 const Sensor = require('./Sensor')
 
@@ -37,6 +38,19 @@ module.exports = class UltrasoundSensor extends Sensor{
                 process.exit(1)
             }
         })
+
+        const csvWriter = createCsvWriter({
+            path: `${config_sensor.data_rep}/InfraRed_${timestamp}_${test_env.toVary}${env.temperature}.csv`,
+            header: [
+                {id: 'timestamp', title: 'TIMESTAMP'},
+                {id: 'timestamp_field', title: 'TIMESTAMP FIELD'},
+                {id: 'sensor', title: 'Sensor'},
+                {id: 'status', title: 'STATUS'},
+                {id: 'distance', title: 'DISTANCE'}
+            ]
+        })
+        const records = []
+        await csvWriter.writeRecords(records)
 
         this.parser.on('data', (data) => {
             data = data.slice(0, data.length - 2)

@@ -23,7 +23,7 @@ module.exports = {
 ${colors.title("==================== Environments ==========================")}
 `
         )
-        test_env.environments.forEach(test => {
+        test_env.forEach(test => {
             console.log(
 `${colors.gray.bold(`===== Test on different ${test.toVary}`)}
 `

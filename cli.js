@@ -271,9 +271,9 @@ async function change_baud_rates(configs) {
     return configs
 }
 
-function exec_command(name, test_env) {
+async function exec_command(name, test_env, configs) {
     let command = commands.get(name)
-    command.execute(test_env)
+    await command.execute(test_env, configs)
 }
 
 async function choose_test_env() {
@@ -305,6 +305,17 @@ async function ask_to_run() {
     return result
 }
 
+async function ask_to_use_arduino() {
+    console.log()
+    let result = await inquirer.prompt({
+        type: 'confirm',
+        name: 'ask_use_arduino',
+        message: 'Will you use the sensors in the arduino ?',
+        default: true
+    })
+    return result
+}
+
 module.exports = {
 
     list_default_parameter: list_default_parameter,
@@ -320,6 +331,7 @@ module.exports = {
     return_default_env: return_default_env,
     ask_to_run: ask_to_run,
     exec_command: exec_command,
-    choose_test_env: choose_test_env
+    choose_test_env: choose_test_env,
+    ask_to_use_arduino: ask_to_use_arduino
 
 }

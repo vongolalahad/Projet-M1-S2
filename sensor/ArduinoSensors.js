@@ -1,6 +1,7 @@
 const SerialPort = require('serialport')
 const Ready = SerialPort.parsers.Ready
 const Readline = SerialPort.parsers.Readline
+const createCsvWriter = require('csv-writer').createObjectCsvWriter
 
 const fs = require('fs')
 
@@ -42,7 +43,7 @@ module.exports  = class ArduinoSensors  {
         })
     }
 
-    start(config, config_arduino, test_env, env, timestamp, current_sensor, count) {
+    async start(config, config_arduino, test_env, env, timestamp, current_sensor) {
         if(this.port === undefined) {
             console.error("this.port is undefined")
             process.exit(1)
@@ -51,6 +52,21 @@ module.exports  = class ArduinoSensors  {
             console.error("this.parser is undefined")
             process.exit(1)
         }
+
+        const csvWriter = createCsvWriter({
+            path: `${config_sensor.data_rep}/InfraRed_${timestamp}_${test_env.toVary}${env.temperature}.csv`,
+            header: [
+                {id: 'timestamp', title: 'TIMESTAMP'},
+                {id: 'temperature', title: 'temperature'},
+                {id: 'red_color', title: 'RED COLOR'},
+                {id: 'green_color', title: 'GREEN COLOR'},
+                {id: 'blue_color', title: 'BLUE COLOR'},
+                {id: 'humidity', title: "HUMIDITY"},
+                {id: 'lux', title: 'LUX'}
+            ]
+        })
+        const records = []
+        await csvWriter.writeRecords(records)
 
         this.parser.on('data', data => {
             data = Buffer.concat([new Buffer(Date.now().toString()), new Buffer([0x2c]), new Buffer(data)])

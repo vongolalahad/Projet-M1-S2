@@ -3,6 +3,7 @@ const Readline = SerialPort.parsers.Readline
 const Ready = SerialPort.parsers.Ready
 const fs = require('fs')
 const Progress = require('progress')
+const createCsvWriter = require('csv-writer').createObjectCsvWriter
 
 const Sensor = require('./Sensor')
 
@@ -28,6 +29,19 @@ module.exports  = class IRSensor extends Sensor {
                 process.exit(1)
             }
         })
+
+        const csvWriter = createCsvWriter({
+            path: `${config_sensor.data_rep}/InfraRed_${timestamp}_${test_env.toVary}${env.temperature}.csv`,
+            header: [
+                {id: 'timestamp', title: 'TIMESTAMP'},
+                {id: 'status', title: 'STATUS'},
+                {id: 'distance', title: 'DISTANCE'},
+                {id: 'signalRate', title: 'Signal Rate'},
+                {id: 'ambientRate', title: 'Ambient Rate'}
+            ]
+        })
+        const records = []
+        await csvWriter.writeRecords(records)
 
         this.parser.on('data', (data) => {
             data = Date.now() + ", " + data
