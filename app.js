@@ -158,7 +158,7 @@ async function checking(config, arduino_config, test_env, env, arduino_sensors) 
                 value = arduino_sensors.parser.read()
                 value = value.split(',')[5]
                 value = ((new Buffer(value)).slice(0, 3)).toString()
-                if (Number(value) !== Number(env.lux)) {
+                if (Number(value) <= Number(env.lux) + Number(arduino_config.imprecision_lux) && Number(value) >= Number(env.lux) - Number(arduino_config.imprecision_lux)) {
                     finish = true
                     clearInterval(bar_timer)
                     bar.stop()
@@ -171,7 +171,7 @@ async function checking(config, arduino_config, test_env, env, arduino_sensors) 
                 await timer(3*1000)
                 value = arduino_sensors.parser.read()
                 value = value.split(',')[4]
-                if (Number(value) !== Number(env.humidity)) {
+                if (Number(value) <= Number(env.humidity) + Number(arduino_config.imprecision_humidity) && Number(value) >= Number(arduino_config.imprecision_humidity)) {
                     finish = true
                     clearInterval(bar_timer)
                     bar.stop()
