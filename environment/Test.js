@@ -1,5 +1,8 @@
-
-
+'use strict'
+/**
+ *
+ * @type {module.Test}
+ */
 module.exports = class Test {
 
     constructor(toVary, environments) {

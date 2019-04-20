@@ -1,3 +1,11 @@
+/**
+ *
+ * cli ls_param
+ *
+ * List current parameters of the program
+ *
+ */
+
 'use strict'
 
 require('colors').setTheme({
@@ -28,17 +36,17 @@ ${colors.subtitle("===== General config")}
 ${colors.subtitle("===== Arduino config")}
       ${colors.key("Port            : ")} ${colors.value(configs.arduino.port)}
       ${colors.key("BaudRate        : ")} ${colors.value(configs.arduino.baudRate)}
-      ${colors.key("Data repository : ")} ${colors.value(configs.arduino.data_rep)}
+      ${colors.key("Data repository : ")} ${colors.value(configs.arduino["data repository"])}
       
 ${colors.subtitle("===== Infra red sensor config")}
       ${colors.key("Port            : ")} ${colors.value(configs.stm32_IR.port)}
       ${colors.key("BaudRate        : ")} ${colors.value(configs.stm32_IR.baudRate)}
-      ${colors.key("Data repository : ")} ${colors.value(configs.stm32_IR.data_rep)}
+      ${colors.key("Data repository : ")} ${colors.value(configs.stm32_IR["data repository"])}
       
 ${colors.subtitle("===== Ultra sound sensor config")}
       ${colors.key("Port            : ")} ${colors.value(configs.stm32_ultrasound.port)}
       ${colors.key("BaudRate        : ")} ${colors.value(configs.stm32_ultrasound.baudRate)}
-      ${colors.key("Data repository : ")} ${colors.value(configs.stm32_ultrasound.data_rep)}
+      ${colors.key("Data repository : ")} ${colors.value(configs.stm32_ultrasound["data repository"])}
 `
         )
         console.log(

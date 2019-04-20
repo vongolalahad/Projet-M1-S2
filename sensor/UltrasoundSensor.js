@@ -1,3 +1,9 @@
+/**
+ *
+ *
+ */
+
+'use strict'
 const SerialPort = require('serialport')
 const Ready = SerialPort.parsers.Ready
 const ByteLength = SerialPort.parsers.ByteLength
@@ -40,7 +46,7 @@ module.exports = class UltrasoundSensor extends Sensor{
         })
 
         const csvWriter = createCsvWriter({
-            path: `${config_sensor.data_rep}/InfraRed_${timestamp}_${test_env.toVary}${env.temperature}.csv`,
+            path: `${config_sensor["data repository"]}/InfraRed_${timestamp}_${test_env.toVary}${env.temperature}.csv`,
             header: [
                 {id: 'timestamp', title: 'TIMESTAMP'},
                 {id: 'timestamp_field', title: 'TIMESTAMP FIELD'},
@@ -55,21 +61,8 @@ module.exports = class UltrasoundSensor extends Sensor{
         this.parser.on('data', (data) => {
             data = data.slice(0, data.length - 2)
             data = Buffer.concat([new Buffer(Date.now().toString()), new Buffer([0x2c]), data, new Buffer([0x0a])])
-            //console.log(UltrasoundSensor.count_occurrence(data))
             if (UltrasoundSensor.count_occurrence(data) !== 4) return
-            // Start measurement algorithm
-            //....
-            /*let bar = new Progress('[:bar] :current secs/:total', {total: config.timeout})
-            let timer = setInterval(() => {
-                bar.tick()
-                if (bar.complete) {
-                    clearInterval(timer)
-                }
-            }, 1000)
-            let checking = setInterval(() => {
-
-            }, 1000)*/
-            fs.appendFile(`${config_sensor.data_rep}/Ultrasound_${timestamp}_${test_env.toVary}${ Sensor.getValue(test_env, env) }.csv`, data.toString(), (err) => {
+            fs.appendFile(`${config_sensor["data repository"]}/Ultrasound_${timestamp}_${test_env.toVary}${ Sensor.getValue(test_env, env) }.csv`, data.toString(), (err) => {
                 if (err) console.log(err)
             })
         })

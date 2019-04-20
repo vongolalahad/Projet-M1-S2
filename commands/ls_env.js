@@ -1,3 +1,11 @@
+/**
+ * cli ls_env
+ *
+ * List all environments in the running program
+ *
+ */
+
+
 'use strict'
 
 require('colors').setTheme({

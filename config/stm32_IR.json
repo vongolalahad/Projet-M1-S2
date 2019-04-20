@@ -1,5 +1,5 @@
 {
   "port": "COM8",
   "baudRate": 115200,
-  "data_rep": "./data/stm32"
+  "data repository": "./data/stmIR"
 }

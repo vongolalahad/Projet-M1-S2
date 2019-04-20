@@ -1,5 +1,5 @@
 {
   "port": "COM10",
   "baudRate": 230400,
-  "data_rep": "./data/stm32"
+  "data repository": "./data/ultrasound"
 }
