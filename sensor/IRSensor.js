@@ -1,8 +1,13 @@
+/**
+ *
+ *
+ */
+
+'use strict'
 const SerialPort = require('serialport')
 const Readline = SerialPort.parsers.Readline
 const Ready = SerialPort.parsers.Ready
 const fs = require('fs')
-const Progress = require('progress')
 const createCsvWriter = require('csv-writer').createObjectCsvWriter
 
 const Sensor = require('./Sensor')
@@ -31,7 +36,7 @@ module.exports  = class IRSensor extends Sensor {
         })
 
         const csvWriter = createCsvWriter({
-            path: `${config_sensor.data_rep}/InfraRed_${timestamp}_${test_env.toVary}${env.temperature}.csv`,
+            path: `${config_sensor["data repository"]}/InfraRed_${timestamp}_${test_env.toVary}${env.temperature}.csv`,
             header: [
                 {id: 'timestamp', title: 'TIMESTAMP'},
                 {id: 'status', title: 'STATUS'},
@@ -48,25 +53,7 @@ module.exports  = class IRSensor extends Sensor {
             let count = data.toString().split(',').length
             if (count !== 5) return
             data += "\n"
-            // Start measurement algorithm (while tem != ...)
-            //......
-
-            /*let bar = new Progress('[:bar] :current secs/:total', {total: config.timeout})
-            let timer = setInterval(() => {
-                bar.tick()
-                if (bar.complete) {
-                    clearInterval(timer)
-                }
-            }, 1000)
-            let checking = setInterval(() => {
-                let promise = new Promise( (resolve, reject) => {
-                    timer = setTimeout(()=>{
-                        clearTimeout(clear)
-                        resolve("finish")
-                    },time)
-                })
-            }, 1000)*/
-            fs.appendFile(`${config_sensor.data_rep}/InfraRed_${timestamp}_${test_env.toVary}${Sensor.getValue(test_env, env)}.csv`, data.toString(), (err) => {
+            fs.appendFile(`${config_sensor["data repository"]}/InfraRed_${timestamp}_${test_env.toVary}${Sensor.getValue(test_env, env)}.csv`, data.toString(), (err) => {
                 if (err) console.log(err)
             })
         })

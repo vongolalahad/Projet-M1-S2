@@ -1,7 +1,9 @@
-
+/**
+ *
+ *
+ */
+'use strict'
 const SerialPort = require('serialport')
-const Readline = SerialPort.parsers.Readline
-const Ready = SerialPort.parsers.Ready
 
 module.exports = class Sensor {
 
@@ -60,15 +62,6 @@ module.exports = class Sensor {
             default:
                 return "null"
         }
-    }
-
-    async timer(time) {
-        return new Promise( (resolve, reject) => {
-            setTimeout(()=>{
-                clearTimeout(clear)
-                resolve("finish")
-            },time)
-        })
     }
 
 }

@@ -1,3 +1,9 @@
+/**
+ *
+ */
+
+'use strict'
+
 const SerialPort = require('serialport')
 const Ready = SerialPort.parsers.Ready
 const Readline = SerialPort.parsers.Readline
@@ -54,7 +60,7 @@ module.exports  = class ArduinoSensors  {
         }
 
         const csvWriter = createCsvWriter({
-            path: `${config_sensor.data_rep}/InfraRed_${timestamp}_${test_env.toVary}${env.temperature}.csv`,
+            path: `${config_arduino["data repository"]}/InfraRed_${timestamp}_${test_env.toVary}${env.temperature}.csv`,
             header: [
                 {id: 'timestamp', title: 'TIMESTAMP'},
                 {id: 'temperature', title: 'temperature'},
@@ -72,7 +78,7 @@ module.exports  = class ArduinoSensors  {
             data = Buffer.concat([new Buffer(Date.now().toString()), new Buffer([0x2c]), new Buffer(data)])
             if (ArduinoSensors.count_occurrence(data) !== 6) return
             data += '\n'
-            fs.appendFile(`${config_arduino.data_rep}/${current_sensor.type}_${timestamp}_${test_env.toVary}${ ArduinoSensors.getValue(test_env, env) }.csv`, data.toString(), (err) => {
+            fs.appendFile(`${config_arduino["data repository"]}/${current_sensor.type}_${timestamp}_${test_env.toVary}${ ArduinoSensors.getValue(test_env, env) }.csv`, data.toString(), (err) => {
                 if (err) console.log(err)
             })
         })

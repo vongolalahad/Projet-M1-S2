@@ -1,10 +1,16 @@
+/**
+ *
+ *
+ *
+ */
+
 'use strict'
 
 const configs = {
     config: require('./config/config'),
     arduino: require('./config/arduino'),
     stm32_IR: require('./config/stm32_IR'),
-    stm32_ultrasound: require('./config/stm32_ultrasound')
+    ultrasound: require('./config/ultrasound')
 }
 const default_test_env = require('./environment/Environment').default_test_env
 require('colors').setTheme({
@@ -27,34 +33,53 @@ for (const file of commandFiles) {
 }
 
 /**
- * List default parameter of the application
+ * List default parameters of the application
  */
 function list_default_parameter() {
     console.log(
 `
 ${colors.title("==================== Default parameters ====================")}
 
-${colors.subtitle("===== General config")}
-      ${colors.key("Time out        : ")} ${colors.value(configs.config.timeout)}
-      
-${colors.subtitle("===== Arduino config")}
-      ${colors.key("Port            : ")} ${colors.value(configs.arduino.port)}
-      ${colors.key("BaudRate        : ")} ${colors.value(configs.arduino.baudRate)}
-      ${colors.key("Data repository : ")} ${colors.value(configs.arduino.data_rep)}
-      
-${colors.subtitle("===== Infra red sensor config")}
-      ${colors.key("Port            : ")} ${colors.value(configs.stm32_IR.port)}
-      ${colors.key("BaudRate        : ")} ${colors.value(configs.stm32_IR.baudRate)}
-      ${colors.key("Data repository : ")} ${colors.value(configs.stm32_IR.data_rep)}
-      
-${colors.subtitle("===== Ultra sound sensor config")}
-      ${colors.key("Port            : ")} ${colors.value(configs.stm32_ultrasound.port)}
-      ${colors.key("BaudRate        : ")} ${colors.value(configs.stm32_ultrasound.baudRate)}
-      ${colors.key("Data repository : ")} ${colors.value(configs.stm32_ultrasound.data_rep)}
-`
+${colors.subtitle("===== General config")}`
     )
+    Object.entries(configs.config).forEach(entry => {
+        console.log(
+`      ${colors.key(`${entry[0].padEnd(20, ' ')}`)}\t\t ${colors.value(`${entry[1]}`)}`
+        )
+    })
+    console.log(
+`
+${colors.subtitle("===== Arduino config")}`
+    )
+    Object.entries(configs.arduino).forEach(entry => {
+        console.log(
+`      ${colors.key(`${entry[0].padEnd(20, ' ')}`)}\t\t ${colors.value(`${entry[1]}`)}`
+        )
+    })
+    console.log(
+`
+${colors.subtitle("===== Infra red sensor config")}`
+    )
+    Object.entries(configs.stm32_IR).forEach(entry => {
+        console.log(
+`      ${colors.key(`${entry[0].padEnd(20, ' ')}`)}\t\t ${colors.value(`${entry[1]}`)}`
+        )
+    })
+    console.log(
+`
+${colors.subtitle("===== Ultra sound sensor config")}`
+    )
+    Object.entries(configs.ultrasound).forEach(entry => {
+        console.log(
+`      ${colors.key(`${entry[0].padEnd(20, ' ')}`)}\t\t ${colors.value(`${entry[1]}`)}`
+        )
+    })
 }
 
+/**
+ * List default environments of the application
+ *
+ */
 function list_default_env() {
     let i = 0
     console.log(
@@ -76,27 +101,34 @@ ${colors.title("==================== Default environments ==================")}
     })
 }
 
+/**
+ * Ask the parameter of the application to change
+ *
+ * @returns {Promise<*>}
+ */
 async function ask_parameter_to_change() {
-    let result = await inquirer.prompt([
+    let params = [{ name: "Nothing" }]
+    for (const config of Object.values(configs)) {
+        for (const param of Object.keys(config)) {
+            if (!params.includes(param))
+                params.push({ name: param })
+        }
+    }
+    return await inquirer.prompt([
         {
             type: 'checkbox',
             name: 'change_parameters',
             message: `Which parameters do you want to change ?`,
-            choices: [
-                { name: 'Nothing' },
-                { name: 'Ports' },
-                { name: 'Baud Rates' },
-            ],
+            choices: params,
             validate: function (answer) {
                 return !(answer.length > 1 && answer.includes("Nothing"))
             }
         }
     ])
-    return result
 }
 
 async function ask_sensor_to_use() {
-    let result = await inquirer.prompt([
+    return await inquirer.prompt([
         {
             type: 'list',
             name: 'sensor_to_use',
@@ -107,11 +139,10 @@ async function ask_sensor_to_use() {
             ]
         }
     ])
-    return result
 }
 
 async function ask_exec_command() {
-    let result = await inquirer.prompt([
+    return await inquirer.prompt([
         {
             type: 'confirm',
             name: 'ask_execute_command',
@@ -119,11 +150,10 @@ async function ask_exec_command() {
             default: false
         }
     ])
-    return result
 }
 
 async function ask_exec_another_command() {
-    let result = await inquirer.prompt([
+    return await inquirer.prompt([
         {
             type: 'confirm',
             name: 'ask_execute_command',
@@ -131,7 +161,6 @@ async function ask_exec_another_command() {
             default: false
         }
     ])
-    return result
 }
 
 
@@ -140,7 +169,7 @@ async function command_to_execute() {
     commands.forEach((key, value, map) =>{
         list_commands.push(key)
     })
-    let result = await inquirer.prompt([
+    return await inquirer.prompt([
         {
             type: 'list',
             name: 'command_to_exec',
@@ -148,11 +177,10 @@ async function command_to_execute() {
             choices: list_commands
         }
     ])
-    return result
 }
 
 function return_default_config() {
-    return { config: configs.config, arduino_config: configs.arduino, stm_ir_config: configs.stm32_IR, stm_ultrasound_config: configs.stm32_ultrasound }
+    return { config: configs.config, arduino_config: configs.arduino, stm_ir_config: configs.stm32_IR, stm_ultrasound_config: configs.ultrasound }
 }
 
 function return_default_env() {
@@ -271,13 +299,21 @@ async function change_baud_rates(configs) {
     return configs
 }
 
+async function change_timeout(configs) {}
+
+async function change_data_rep(configs) {}
+
+async function change_measurement_time(configs) {}
+
+async function change_imprecision(configs, imprecision) {}
+
 async function exec_command(name, test_env, configs) {
     let command = commands.get(name)
     await command.execute(test_env, configs)
 }
 
 async function choose_test_env() {
-    let result = await inquirer.prompt([
+    return await inquirer.prompt([
         {
             type: 'list',
             name: 'test_env_to_use',
@@ -289,12 +325,11 @@ async function choose_test_env() {
             ]
         }
     ])
-    return result
 }
 
 async function ask_to_run() {
     console.log()
-    let result = await inquirer.prompt([
+    return await inquirer.prompt([
         {
             type: 'confirm',
             name: 'ask_start_test',
@@ -302,18 +337,16 @@ async function ask_to_run() {
             default: false
         }
     ])
-    return result
 }
 
 async function ask_to_use_arduino() {
     console.log()
-    let result = await inquirer.prompt({
+    return await inquirer.prompt({
         type: 'confirm',
         name: 'ask_use_arduino',
         message: 'Will you use the sensors in the arduino ?',
         default: true
     })
-    return result
 }
 
 module.exports = {
@@ -327,6 +360,10 @@ module.exports = {
     ask_exec_another_command: ask_exec_another_command,
     change_ports: change_ports,
     change_baud_rates: change_baud_rates,
+    change_timeout: change_timeout,
+    change_data_rep: change_data_rep,
+    change_measurement_time: change_measurement_time,
+    change_imprecision: change_imprecision,
     return_default_config: return_default_config,
     return_default_env: return_default_env,
     ask_to_run: ask_to_run,

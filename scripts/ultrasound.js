@@ -1,6 +1,6 @@
 "use strict"
 
-const stm_ultrasound_config = require('../config/stm32_ultrasound')
+const stm_ultrasound_config = require('../config/ultrasound')
 const fs = require('fs')
 const SerialPort = require('serialport')
 const Readline = SerialPort.parsers.Readline

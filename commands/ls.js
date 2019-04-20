@@ -1,7 +1,10 @@
 /**
+ * cli ls
  * list available commands
  *
  */
+'use strict'
+
 require('colors').setTheme({
     title: "blue",
     subtitle: "green",
@@ -17,8 +20,6 @@ for (const file of commandFiles) {
     const command = require(`${fs.realpathSync('./commands')}/${file}`)
     commands.set(command.name, command)
 }
-
-"use strict"
 
 module.exports = {
     name: "ls",

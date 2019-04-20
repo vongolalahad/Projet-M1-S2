@@ -1,23 +1,47 @@
+/**
+ * cli add_env
+ * Allow the user to add environment to the running program
+ *
+ */
+
 'use strict'
 
-const inquirer = require('inquirer')
-const Environment = require('../environment/Environment').Environment
+const inquirer = require('inquirer')                                        // The inquirer module
+const Environment = require('../environment/Environment').Environment       // The Environment constructor
 
-const inputNumber = ["temperature", "lux", "humidity"]
+const INPUTNUMBER = ["temperature", "lux", "humidity"]                      // Array containing the property that should be decimal number
 
+/**
+ * Define the type of input of the parameter (number or input)
+ * Test if the string put as parameter is included inside {{INPUTNUMBER}}. If it is
+ * so the type is a number and return "number". Else return "input"
+ *
+ * @param {string} param the input we are testing
+ * @returns {string}
+ */
 function typeOfInput(param) {
-    if (inputNumber.includes(param)) {
+    if (INPUTNUMBER.includes(param)) {
         return "number"
     }
     return "input"
 }
 
+/**
+ *
+ * @param {string} param
+ * @param {string} value
+ * @returns {*}
+ */
 function inputStringToNumber(param, value) {
-    if (inputNumber.includes(param) && value != null)
+    if (INPUTNUMBER.includes(param) && value != null)
         return Number(value)
     return value
 }
 
+/**
+ *
+ * @returns {Promise<*>}
+ */
 async function choose_test_env() {
     let result = await inquirer.prompt([
         {
@@ -34,9 +58,27 @@ async function choose_test_env() {
     return result
 }
 
+/**
+ *
+ *
+ *
+ *
+ *
+ * @type {{name: string, description: string, execute: (function(*): *)}}
+ */
 module.exports = {
+    /**
+     * The name of the command
+     */
     name: "add_env",
+
     description: "Add an environment",
+
+    /**
+     *
+     * @param test_env
+     * @returns {Promise<*>}
+     */
     execute: async function (test_env) {
         let params = [ "temperature", "color", "surface", "lux", "humidity" ]
         let value_params = []

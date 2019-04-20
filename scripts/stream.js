@@ -3,7 +3,7 @@
 const fs = require('fs')
 const arduino_config = require('../config/arduino')
 const stm_ir_config = require('../config/stm32_IR')
-const stm_ultrasound_config = require('../config/stm32_ultrasound')
+const stm_ultrasound_config = require('../config/ultrasound')
 const SerialPort = require('serialport')
 const colors = require("colors")
 const Readline = SerialPort.parsers.Readline
@@ -40,7 +40,7 @@ function main() {
 main()
 
 /*    arduino_port.on('data', (data) => {
-        fs.appendFile(`${arduino_config.data_rep}/test.csv`, data.toString(), (err) => {
+        fs.appendFile(`${arduino_config["data repository"]}/test.csv`, data.toString(), (err) => {
             if (err) console.log(err)
         })
     })*/
