@@ -43,19 +43,15 @@ function inputStringToNumber(param, value) {
  * @returns {Promise<*>}
  */
 async function choose_test_env() {
-    let result = await inquirer.prompt([
+    let test_env = ["temperature", "color", "surface", "lux", "humidity"]
+    return await inquirer.prompt([
         {
             type: 'list',
             name: 'test_env_to_use',
             message: 'Which property do you want to vary ?',
-            choices: [
-                'temperature',
-                'color',
-                "surface"
-            ]
+            choices: test_env
         }
     ])
-    return result
 }
 
 /**

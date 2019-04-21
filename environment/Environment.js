@@ -18,6 +18,10 @@ class Environment {
         this._lux = lux
         this._humidity = humidity
     }
+
+    get id() {
+        return this._id
+    }
     
     get temperature() {
         return this._temperature
@@ -40,7 +44,11 @@ class Environment {
     }
 
     toString() {
-        return `[ Environment: id=${this._id} temperature=${this.temperature}, color=${this.color}, surface=${this.surface}, lux=${this.lux} ]`
+        return `[ Environment: id=${this._id}, temperature=${this.temperature}, color=${this.color}, surface=${this.surface}, lux=${this.lux} ]`
+    }
+
+    inspect(depth, opts) {
+        return `[ Environment: id=${this._id}, temperature=${this.temperature}, color=${this.color}, surface=${this.surface}, lux=${this.lux} ]`
     }
 
 }

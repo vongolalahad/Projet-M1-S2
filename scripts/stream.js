@@ -3,7 +3,7 @@
 const fs = require('fs')
 const arduino_config = require('../config/arduino')
 const stm_ir_config = require('../config/stm32_IR')
-const stm_ultrasound_config = require('../config/ultrasound')
+const ultrasound_config = require('../config/ultrasound')
 const SerialPort = require('serialport')
 const colors = require("colors")
 const Readline = SerialPort.parsers.Readline
@@ -13,7 +13,7 @@ const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('
 const port = new SerialPort("/dev/ttyACM0", { baudRate: stm_ir_config.baudRate })
 
 const stm_ir_port = port.pipe(new Ready({ delimiter: '\n\r' })).pipe(new Readline({ delimiter: '\n\r' }))
-//const stm_ultrasound_port = new SerialPort(stm_ultrasound_config.port, { baudRate: stm_ultrasound_config.baudRate })
+//const stm_ultrasound_port = new SerialPort(ultrasound_config.port, { baudRate: ultrasound_config.baudRate })
 //const arduino_port = new SerialPort(arduino_config.port, { baudRate: arduino_config.baudRate })
 
 /**

@@ -2,7 +2,7 @@
   "port": "COM9",
   "baudRate": 9600,
   "data repository": "./data/arduino",
-  "imprecision_temperature": 2,
-  "imprecision_lux": 0,
-  "imprecision_humidity": 0
+  "temperature imprecision": 2,
+  "lux imprecision": 0,
+  "humidity imprecision": 0
 }

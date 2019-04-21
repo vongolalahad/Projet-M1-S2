@@ -38,7 +38,7 @@ ${colors.title("==================== Environments ==========================")}
             )
             test.environments.forEach(environment => {
                 console.log(
-`      ${colors.key(`Environment ${++i}:`)} ${colors.value(environment.toString())}
+`      ${colors.key(`Environment ${++i}:`)} ${colors.value(environment)}
 `
                 )
             })

@@ -30,41 +30,39 @@ module.exports = {
 `
 ${colors.title("==================== Parameters ====================")}
 
-${colors.subtitle("===== General config")}
-      ${colors.key("Time out        : ")} ${colors.value(configs.config.timeout)}
-      
-${colors.subtitle("===== Arduino config")}
-      ${colors.key("Port            : ")} ${colors.value(configs.arduino.port)}
-      ${colors.key("BaudRate        : ")} ${colors.value(configs.arduino.baudRate)}
-      ${colors.key("Data repository : ")} ${colors.value(configs.arduino["data repository"])}
-      
-${colors.subtitle("===== Infra red sensor config")}
-      ${colors.key("Port            : ")} ${colors.value(configs.stm32_IR.port)}
-      ${colors.key("BaudRate        : ")} ${colors.value(configs.stm32_IR.baudRate)}
-      ${colors.key("Data repository : ")} ${colors.value(configs.stm32_IR["data repository"])}
-      
-${colors.subtitle("===== Ultra sound sensor config")}
-      ${colors.key("Port            : ")} ${colors.value(configs.stm32_ultrasound.port)}
-      ${colors.key("BaudRate        : ")} ${colors.value(configs.stm32_ultrasound.baudRate)}
-      ${colors.key("Data repository : ")} ${colors.value(configs.stm32_ultrasound["data repository"])}
-`
+${colors.subtitle("===== General config")}`
         )
-        console.log(
-            `
-${colors.title("==================== Environments ==========================")}
-`
-        )
-        test_env.environments.forEach(test => {
+        Object.entries(configs.config).forEach(entry => {
             console.log(
-                `${colors.gray.bold(`===== Test on different ${test.toVary}`)}
-`
+`      ${colors.key(`${entry[0].padEnd(20, ' ')}`)}\t\t ${colors.value(`${entry[1]}`)}`
             )
-            test.environments.forEach(environment => {
-                console.log(
-                    `      ${colors.key(`Environment ${++i}:`)} ${colors.value(environment.toString())}
+        })
+        console.log(
 `
-                )
-            })
+${colors.subtitle("===== Arduino config")}`
+        )
+        Object.entries(configs.arduino_config).forEach(entry => {
+            console.log(
+`      ${colors.key(`${entry[0].padEnd(20, ' ')}`)}\t\t ${colors.value(`${entry[1]}`)}`
+            )
+        })
+        console.log(
+`
+${colors.subtitle("===== Infra red sensor config")}`
+        )
+        Object.entries(configs.stm_ir_config).forEach(entry => {
+            console.log(
+`      ${colors.key(`${entry[0].padEnd(20, ' ')}`)}\t\t ${colors.value(`${entry[1]}`)}`
+            )
+        })
+        console.log(
+`
+${colors.subtitle("===== Ultra sound sensor config")}`
+        )
+        Object.entries(configs.ultrasound_config).forEach(entry => {
+            console.log(
+`      ${colors.key(`${entry[0].padEnd(20, ' ')}`)}\t\t ${colors.value(`${entry[1]}`)}`
+            )
         })
     }
 }

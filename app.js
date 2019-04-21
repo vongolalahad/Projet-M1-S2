@@ -26,7 +26,10 @@ const cli_param_command = {
     "timeout": cli.change_timeout,
     "data repository": cli.change_data_rep,
     "measurement time": cli.change_measurement_time,
-    "imprecision temperature": cli.change_imprecision
+    "temperature imprecision": cli.change_imprecision,
+    "lux imprecision": cli.change_imprecision,
+    "humidity imprecision": cli.change_imprecision,
+    "Nothing": function () {}
 }
 
 // return object : {config.config, config.arduino, config.stm32_IR, config.stm32ultra, sensor_used(object of the class)}
@@ -58,13 +61,13 @@ async function run_cli() {
     test_env_to_use = test_env.find(test => { return test.toVary === test_env_to_use })
 
     sensor_to_use = (await cli.ask_sensor_to_use()).sensor_to_use
-    if (sensor_to_use === "Infra red") {
+    if (sensor_to_use === "infra red") {
         sensor_to_use = new IRSensor(configs.stm_ir_config.port, configs.stm_ir_config, "InfraRed")
         sensor_config_to_use = configs.stm_ir_config
     }
-    if (sensor_to_use === "Ultra sound") {
-        sensor_to_use = new UltrasoundSensor(configs.stm_ultrasound_config.port, configs.stm_ultrasound_config, "Ultrasound")
-        sensor_config_to_use = configs.stm_ultrasound_config
+    if (sensor_to_use === "ultra sound") {
+        sensor_to_use = new UltrasoundSensor(configs.ultrasound_config.port, configs.ultrasound_config, "Ultrasound")
+        sensor_config_to_use = configs.ultrasound_config
     }
 
     return { config:configs.config, arduino_config:configs.arduino_config, sensor_config:sensor_config_to_use, sensor:sensor_to_use, test_env: test_env_to_use }
@@ -74,6 +77,7 @@ async function main() {
     let timestamp
     let use_arduino
     let arduino_sensors
+    let pass
 
     const { config, arduino_config, sensor_config, sensor, test_env} = await run_cli()
     do {
@@ -85,12 +89,12 @@ async function main() {
         arduino_sensors = new ArduinoSensors(arduino_config.port, arduino_config)
 
     for (let i = 0; i < test_env.environments.length; i++) {
-        arduino_sensors.openPort()
+        arduino_sensors !== undefined ? arduino_sensors.openPort() : ''
 
         timestamp = Date.now()
-        let pass = await checking(config, arduino_config, test_env, test_env.environments[i], arduino_sensors)
+        arduino_sensors !== undefined ? pass = await checking(config, arduino_config, test_env, test_env.environments[i], arduino_sensors) : ''
         if (pass) {
-            arduino_sensors !== undefined ? arduino_sensors.stop() : ''
+            arduino_sensors.stop()
             await timer(2000)
             continue
         }
@@ -107,6 +111,7 @@ async function main() {
 }
 
 async function checking(config, arduino_config, test_env, env, arduino_sensors) {
+    let checkable = [ "temperature", "humidity", "lux"]
 
     if (arduino_sensors === undefined) {
         await timer(config.timeout*1000)
@@ -118,25 +123,31 @@ async function checking(config, arduino_config, test_env, env, arduino_sensors) 
     let bar_timer
     let bar
     let pass
-    console.log(colors.white(`\nYou have ${config.timeout} seconds to change the ${test_env.toVary} to ${ getValue(test_env, env) }. If not, the program will try to test the next environment!`))
 
-    bar = new progress.Bar({
-        format: '[{bar}] {value} secs/{total}',
-        barCompleteChar: '=',
-        barIncompleteChar: '-',
-        barsize: 40,
-        stream: process.stdout
-    })
-    bar.start(config.timeout, 0)
-    bar_timer = setInterval(() => {
-        bar.increment()
-        if (bar.value >= bar.total) {
-            bar.stop()
-            finish = true
-            pass = true
-        }
+    if (checkable.includes(test_env.toVary)) {
+        console.log(colors.white(`\nYou have ${config.timeout} seconds to change the ${test_env.toVary} to ${ getValue(test_env, env) }. If not, the program will try to test the next environment!`))
 
-    }, 1000)
+        bar = new progress.Bar({
+            format: '[{bar}] {value} secs/{total}',
+            barCompleteChar: '=',
+            barIncompleteChar: '-',
+            barsize: 40,
+            stream: process.stdout
+        })
+        bar.start(config.timeout, 0)
+        bar_timer = setInterval(() => {
+            bar.increment()
+            if (bar.value >= bar.total) {
+                bar.stop()
+                finish = true
+                pass = true
+            }
+
+        }, 1000)
+    }
+    else {
+        console.log(colors.white(`\nYou have ${config.timeout} seconds to change the ${test_env.toVary} to ${ getValue(test_env, env) }. After that, the program will start collecting data`))
+    }
 
     while (!finish) {
         switch (test_env.toVary) {
@@ -144,7 +155,7 @@ async function checking(config, arduino_config, test_env, env, arduino_sensors) 
                 arduino_sensors.parser.pause()
                 await timer(3*1000)
                 value = arduino_sensors.parser.read(4)
-                if (Number(value) <= env.temperature + Number(arduino_config.imprecision_temperature) && Number(value) >= env.temperature - Number(arduino_config.imprecision_temperature)) {
+                if (Number(value) <= env.temperature + Number(arduino_config["temperature imprecision"]) && Number(value) >= env.temperature - Number(arduino_config["temperature imprecision"])) {
                     finish = true
                     clearInterval(bar_timer)
                     bar.stop()
@@ -158,7 +169,7 @@ async function checking(config, arduino_config, test_env, env, arduino_sensors) 
                 value = arduino_sensors.parser.read()
                 value = value.split(',')[5]
                 value = ((new Buffer(value)).slice(0, 3)).toString()
-                if (Number(value) <= Number(env.lux) + Number(arduino_config.imprecision_lux) && Number(value) >= Number(env.lux) - Number(arduino_config.imprecision_lux)) {
+                if (Number(value) <= Number(env.lux) + Number(arduino_config["lux imprecision"]) && Number(value) >= Number(env.lux) - Number(arduino_config["lux imprecision"])) {
                     finish = true
                     clearInterval(bar_timer)
                     bar.stop()
@@ -171,7 +182,7 @@ async function checking(config, arduino_config, test_env, env, arduino_sensors) 
                 await timer(3*1000)
                 value = arduino_sensors.parser.read()
                 value = value.split(',')[4]
-                if (Number(value) <= Number(env.humidity) + Number(arduino_config.imprecision_humidity) && Number(value) >= Number(arduino_config.imprecision_humidity)) {
+                if (Number(value) <= Number(env.humidity) + Number(arduino_config["humidity imprecision"]) && Number(value) >= Number(arduino_config["humidity imprecision"])) {
                     finish = true
                     clearInterval(bar_timer)
                     bar.stop()

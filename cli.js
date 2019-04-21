@@ -94,7 +94,7 @@ ${colors.title("==================== Default environments ==================")}
         )
         test.environments.forEach(env => {
             console.log(
-`      ${colors.key(`Environment ${++i}:`)} ${colors.value(env.toString())}
+`      ${colors.key(`Environment ${++i}:`)} ${colors.value(env)}
 `
             )
         })
@@ -110,7 +110,7 @@ async function ask_parameter_to_change() {
     let params = [{ name: "Nothing" }]
     for (const config of Object.values(configs)) {
         for (const param of Object.keys(config)) {
-            if (!params.includes(param))
+            if (params.find(elt => { return elt.name === param }) === undefined)
                 params.push({ name: param })
         }
     }
@@ -134,8 +134,8 @@ async function ask_sensor_to_use() {
             name: 'sensor_to_use',
             message: 'Which sensor are you using ?',
             choices: [
-                'Infra red',
-                'Ultra sound',
+                'infra red',
+                'ultra sound',
             ]
         }
     ])
@@ -163,7 +163,10 @@ async function ask_exec_another_command() {
     ])
 }
 
-
+/**
+ *
+ * @returns {Promise<*>}
+ */
 async function command_to_execute() {
     let list_commands = []
     commands.forEach((key, value, map) =>{
@@ -180,7 +183,7 @@ async function command_to_execute() {
 }
 
 function return_default_config() {
-    return { config: configs.config, arduino_config: configs.arduino, stm_ir_config: configs.stm32_IR, stm_ultrasound_config: configs.ultrasound }
+    return { config: configs.config, arduino_config: configs.arduino, stm_ir_config: configs.stm32_IR, ultrasound_config: configs.ultrasound }
 }
 
 function return_default_env() {
@@ -196,9 +199,9 @@ async function change_ports(configs) {
             name: 'port_to_change',
             message: 'Which port to change ?',
             choices: [
-                "Arduino",
-                "Infra red sensor",
-                "Ultra sound sensor"
+                "arduino",
+                "infra red sensor",
+                "ultra sound sensor"
             ]
         }
     ]
@@ -212,7 +215,7 @@ async function change_ports(configs) {
     ]
     do {
         port_to_change = (await inquirer.prompt(question)).port_to_change
-        if (port_to_change === "Arduino")
+        if (port_to_change === "arduino")
             configs.arduino_config.port = (await inquirer.prompt([
                 {
                     type: 'list',
@@ -221,7 +224,7 @@ async function change_ports(configs) {
                     choices: ports
                 }
             ])).new_port
-        if (port_to_change === "Infra red sensor")
+        if (port_to_change === "infra red sensor")
             configs.stm_ir_config.port = (await inquirer.prompt([
                 {
                     type: 'list',
@@ -230,8 +233,8 @@ async function change_ports(configs) {
                     choices: ports
                 }
             ])).new_port
-        if (port_to_change === "Ultra sound sensor")
-            configs.stm_ultrasound_config.port = (await inquirer.prompt([
+        if (port_to_change === "ultra sound sensor")
+            configs.ultrasound_config.port = (await inquirer.prompt([
                 {
                     type: 'list',
                     name: 'new_port',
@@ -252,9 +255,9 @@ async function change_baud_rates(configs) {
             name: 'baud_rate_to_change',
             message: 'Which baud rate to change ?',
             choices: [
-                "Arduino",
-                "Infra red sensor",
-                "Ultra sound sensor"
+                "arduino",
+                "infra red sensor",
+                "ultra sound sensor"
             ]
         }
     ]
@@ -268,7 +271,7 @@ async function change_baud_rates(configs) {
     ]
     do {
         baud_rate_to_change = (await inquirer.prompt(question)).baud_rate_to_change
-        if (baud_rate_to_change === "Arduino")
+        if (baud_rate_to_change === "arduino")
             configs.arduino_config.baudRate = Number((await inquirer.prompt([
                 {
                     type: 'list',
@@ -277,7 +280,7 @@ async function change_baud_rates(configs) {
                     choices: baudRates
                 }
             ])).new_baud_rate)
-        if (baud_rate_to_change === "Infra red sensor")
+        if (baud_rate_to_change === "infra red sensor")
             configs.stm_ir_config.baudRate = Number((await inquirer.prompt([
                 {
                     type: 'list',
@@ -286,11 +289,11 @@ async function change_baud_rates(configs) {
                     choices: baudRates
                 }
             ])).new_baud_rate)
-        if (baud_rate_to_change === "Ultra sound sensor")
-            configs.stm_ultrasound_config.baudRate = Number((await inquirer.prompt([
+        if (baud_rate_to_change === "ultra sound sensor")
+            configs.ultrasound_config.baudRate = Number((await inquirer.prompt([
                 {
                     type: 'list',
-                    name: 'new_port',
+                    name: 'new_baud_rate',
                     message: 'Choose the correct baud rate ',
                     choices: baudRates
                 }
@@ -299,13 +302,111 @@ async function change_baud_rates(configs) {
     return configs
 }
 
-async function change_timeout(configs) {}
+async function change_timeout(configs, name) {
+    configs.config.timeout = (await inquirer.prompt([
+        {
+            type: "number",
+            name: name,
+            message: `New ${name}: `,
+            default: 30,
+            validate: function (ans) {
+                if (isNaN(ans))
+                    return "You have to put a number"
+                return true
+            }
+        }
+    ]))[name]
+    return configs
+}
 
-async function change_data_rep(configs) {}
+async function change_data_rep(configs, name) {
+    let data_rep_to_change         // The sensor which we want to change the repository of data
+    let question = [
+        {
+            type: 'list',
+            name: 'data_rep_to_change',
+            message: 'Which sensor do you want to change the data repository ?',
+            choices: [
+                "Arduino",
+                "Infra red sensor",
+                "Ultra sound sensor"
+            ]
+        }
+    ]
+    let to_continue = [
+        {
+            type: 'confirm',
+            name: 'ask_continue',
+            message: `Do you want to change another ${name} ?`,
+            default: false
+        }
+    ]
+    do {
+        data_rep_to_change = (await inquirer.prompt(question)).data_rep_to_change
+        if (data_rep_to_change === "Arduino")
+            configs.arduino_config[name] = (await inquirer.prompt([
+                {
+                    type: 'input',
+                    name: 'new_data_rep',
+                    message: `Choose the correct ${name} `,
+                    default: './data/arduino'
+                }
+            ])).new_data_rep
+        if (data_rep_to_change === "Infra red sensor")
+            configs.stm_ir_config[name] = (await inquirer.prompt([
+                {
+                    type: 'input',
+                    name: 'new_data_rep',
+                    message: `Choose the correct baud rate ${name} `,
+                    default: './data/stmIR'
+                }
+            ])).new_data_rep
+        if (data_rep_to_change === "Ultra sound sensor")
+            configs.ultrasound_config[name] = (await inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'new_data_rep',
+                    message: `Choose the correct baud rate ${name} `,
+                    default: './data/ultrasound'
+                }
+            ])).new_data_rep
+    } while (((await inquirer.prompt(to_continue)).ask_continue))
+    return configs
+}
 
-async function change_measurement_time(configs) {}
+async function change_measurement_time(configs, name) {
+    configs.config["measurement time"] = (await inquirer.prompt([
+        {
+            type: "number",
+            name: name,
+            message: `New ${name}: `,
+            default: 30,
+            validate: function (ans) {
+                if (isNaN(ans))
+                    return "You have to put a number"
+                return true
+            }
+        }
+    ]))[name]
+    return configs
+}
 
-async function change_imprecision(configs, imprecision) {}
+async function change_imprecision(configs, imprecision) {
+    configs.config[imprecision] = (await inquirer.prompt([
+        {
+            type: "number",
+            name: imprecision,
+            message: `New ${imprecision}`,
+            default: 30,
+            validate: function (ans) {
+                if (isNaN(ans))
+                    return "You have to put a number"
+                return true
+            }
+        }
+    ]))[imprecision]
+    return configs
+}
 
 async function exec_command(name, test_env, configs) {
     let command = commands.get(name)
@@ -313,16 +414,13 @@ async function exec_command(name, test_env, configs) {
 }
 
 async function choose_test_env() {
+    let test_env = ["temperature", "color", "surface", "lux", "humidity"]
     return await inquirer.prompt([
         {
             type: 'list',
             name: 'test_env_to_use',
             message: 'Which property do you want to vary ?',
-            choices: [
-                'temperature',
-                'color',
-                "surface"
-            ]
+            choices: test_env
         }
     ])
 }

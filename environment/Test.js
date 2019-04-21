@@ -17,4 +17,8 @@ module.exports = class Test {
     get environments() {
         return this._environments
     }
+
+    set environments(newEnv) {
+        this._environments = newEnv
+    }
 }
