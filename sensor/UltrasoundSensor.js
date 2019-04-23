@@ -8,7 +8,6 @@ const SerialPort = require('serialport')
 const Ready = SerialPort.parsers.Ready
 const ByteLength = SerialPort.parsers.ByteLength
 const fs = require('fs')
-let Progress = require('progress')
 const createCsvWriter = require('csv-writer').createObjectCsvWriter
 
 const Sensor = require('./Sensor')
