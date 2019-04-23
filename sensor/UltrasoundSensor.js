@@ -45,7 +45,7 @@ module.exports = class UltrasoundSensor extends Sensor{
         })
 
         const csvWriter = createCsvWriter({
-            path: `${config_sensor["data repository"]}/InfraRed_${timestamp}_${test_env.toVary}${env.temperature}.csv`,
+            path: `${config_sensor["data repository"]}/Ultrasound_${timestamp}_${test_env.toVary}${env.temperature}.csv`,
             header: [
                 {id: 'timestamp', title: 'TIMESTAMP'},
                 {id: 'timestamp_field', title: 'TIMESTAMP FIELD'},
