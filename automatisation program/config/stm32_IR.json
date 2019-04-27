@@ -1,0 +1,6 @@
+{
+  "port": "COM8",
+  "baudRate": 115200,
+  "data repository": "../data/stmIR",
+  "sheet repository": "../data/sheet/stmIR"
+}
