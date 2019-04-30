@@ -4,6 +4,7 @@ const SerialPort = require('serialport')
 const Ready = SerialPort.parsers.Ready
 const ByteLength = SerialPort.parsers.ByteLength
 const fs = require('fs')
+const path =  require("fs")
 const createCsvWriter = require('csv-writer').createObjectCsvWriter
 
 /**
@@ -98,7 +99,7 @@ module.exports = class UltrasoundSensor extends Sensor{
             // If the data is not valid (more or less than 4 information (timestamp, status, distance) received) the data is wrong. So we don't stock it
             if (UltrasoundSensor.count_occurrence(data) !== 4) return
 
-            fs.appendFile(`${config_sensor["data repository"]}/Ultrasound_${timestamp}_${test_env.toVary}${ Sensor.getValue(test_env, env) }.csv`, data.toString(), (err) => {
+            fs.appendFile(fs.readdirSync(`${path.dirname(fs.realpathSync(__filename))}/../${config_sensor["data repository"]}/Ultrasound_${timestamp}_${test_env.toVary}${ Sensor.getValue(test_env, env) }.csv`), data.toString(), (err) => {
                 if (err) console.log(err)
             })
         })

@@ -15,6 +15,7 @@ require('colors').setTheme({
 const colors = require('colors/safe')
 const inquirer = require('inquirer')
 const fs = require('fs')
+const path = require('path')
 const SerialPort = require('serialport')
 
 const configs = {
@@ -25,10 +26,10 @@ const configs = {
 }
 const default_test_env = require('./environment/Environment').default_test_env
 
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'))
+const commandFiles = fs.readdirSync(`${path.dirname(fs.realpathSync(__filename))}/commands`).filter(file => file.endsWith('.js'))
 let commands = new Map()
 for (const file of commandFiles) {
-    const command = require(`./commands/${file}`)
+    const command = require(`${path.dirname(fs.realpathSync(__filename))}/commands/${file}`)
     commands.set(command.name, command)
 }
 

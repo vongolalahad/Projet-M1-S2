@@ -14,10 +14,11 @@ require('colors').setTheme({
 })
 const colors = require('colors/safe')
 const fs = require('fs')
-const commandFiles = fs.readdirSync(fs.realpathSync('./commands')).filter(file => file.endsWith('.js') && file !== "ls.js")
+const path = require('path')
+const commandFiles = fs.readdirSync(`${path.dirname(fs.realpathSync(__filename))}`).filter(file => file.endsWith('.js') && file !== "ls.js")
 let commands = new Map()
 for (const file of commandFiles) {
-    const command = require(`${fs.realpathSync('./commands')}/${file}`)
+    const command = require(`${path.dirname(fs.realpathSync(__filename))}/${file}`)
     commands.set(command.name, command)
 }
 

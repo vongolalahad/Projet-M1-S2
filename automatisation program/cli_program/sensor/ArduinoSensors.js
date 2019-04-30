@@ -6,6 +6,7 @@ const Readline = SerialPort.parsers.Readline
 const createCsvWriter = require('csv-writer').createObjectCsvWriter
 
 const fs = require('fs')
+const path = require('path')
 
 /**
  * The arduino sensor that will contain the sensors to automate the test
@@ -114,7 +115,7 @@ module.exports  = class ArduinoSensors  {
             if (ArduinoSensors.count_occurrence(data) !== 6) return
 
             data += '\n'
-            fs.appendFile(`${config_arduino["data repository"]}/${current_sensor.type}_${timestamp}_${test_env.toVary}${ ArduinoSensors.getValue(test_env, env) }.csv`, data.toString(), (err) => {
+            fs.appendFile(fs.readdirSync(`${path.dirname(fs.realpathSync(__filename))}/../${config_arduino["data repository"]}/${current_sensor.type}_${timestamp}_${test_env.toVary}${ ArduinoSensors.getValue(test_env, env) }.csv`), data.toString(), (err) => {
                 if (err) console.log(err)
             })
         })

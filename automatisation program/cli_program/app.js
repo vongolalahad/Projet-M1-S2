@@ -1,4 +1,6 @@
 /**
+ * Author: Abdou Lahat DEME
+ *
  * Main CLI program
  * Start the program to do test on a sensor ( Infra red or Ultrasound)
  *

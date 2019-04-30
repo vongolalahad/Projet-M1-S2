@@ -4,6 +4,7 @@ const SerialPort = require('serialport')
 const Readline = SerialPort.parsers.Readline
 const Ready = SerialPort.parsers.Ready
 const fs = require('fs')
+const path = require("path")
 const createCsvWriter = require('csv-writer').createObjectCsvWriter
 
 /**
@@ -86,7 +87,7 @@ module.exports  = class IRSensor extends Sensor {
             if (count !== 5) return
 
             data += "\n"
-            fs.appendFile(`${config_sensor["data repository"]}/InfraRed_${timestamp}_${test_env.toVary}${Sensor.getValue(test_env, env)}.csv`, data.toString(), (err) => {
+            fs.appendFile(fs.readdirSync(`${path.dirname(fs.realpathSync(__filename))}/../${config_sensor["data repository"]}/InfraRed_${timestamp}_${test_env.toVary}${Sensor.getValue(test_env, env)}.csv`), data.toString(), (err) => {
                 if (err) console.log(err)
             })
         })

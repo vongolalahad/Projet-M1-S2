@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
+"""
+Author: Louis KABINDA
+
+"""
+
 import os
 import sys
 
@@ -64,20 +69,17 @@ def main(data_folder, sheet_folder, sensor):
 
 def drawImage(entry, sheet_folder, column):
 
-    df = panda.read_csv(entry.path);
-    data = df.values; #conversion datafram to array
-    A=data[:,column]; # recuperation data
+    df = panda.read_csv(entry.path)
+    data = df.values #conversion datafram to array
+    A=data[:,column] # recuperation data
 
 
-    cpt = Counter(A); #unique values and occurences
-    B=list(cpt); #unique values
-    B=np.sort(B); #order by values
-    C=[];
+    cpt = Counter(A) #unique values and occurences
+    B=list(cpt) #unique values
+    B=np.sort(B) #order by values
+    C=[]
     for i in B:
-        C.append(cpt[i]);
-    #print(cpt);
-    #print(B)
-    #print(C)
+        C.append(cpt[i])
     
     plt.scatter(B, C,  color='black')
     plt.plot(B,C, label="ocurrence")
@@ -88,14 +90,9 @@ def drawImage(entry, sheet_folder, column):
     elif column==4 :
         plt.title('ultrason test')
     
-    #print(path)
-    
     entry_image = entry.name
     entry_image_full_path = str(sheet_folder.joinpath(entry_image)).replace("csv", "png")
     print(entry_image_full_path)
-    
-    #print(path)
-    #print(V)
     
     plt.savefig(entry_image_full_path)
     plt.close()
@@ -114,23 +111,5 @@ if __name__ == "__main__":
 
     
     
-
-
-# In[ ]:
-
-
-
-
-
-# In[91]:
-
-
-#infraRedImage('InfraRed_1555594399118_colorpink.csv')
-#infraRedImage(r'C:\Users\louismkm\Desktop\data\InfraRed_1555594536120_colorpurple.csv')
-
-
-# In[ ]:
-
-
 
 
