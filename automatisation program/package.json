@@ -17,7 +17,6 @@
   },
   "homepage": "https://github.com/vongolalahad/Projet-M1-S2#readme",
   "dependencies": {
-    "appjs": "0.0.20",
     "cli-progress": "^2.1.1",
     "colors": "^1.3.3",
     "csv-parser": "^2.2.0",
