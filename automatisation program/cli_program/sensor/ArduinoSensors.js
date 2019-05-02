@@ -91,7 +91,7 @@ module.exports  = class ArduinoSensors  {
          * Create the header for the data that will be stocked in the csv file
          */
         const csvWriter = createCsvWriter({
-            path: `${config_arduino["data repository"]}/${current_sensor.type}_${timestamp}_${test_env.toVary}${env.temperature}.csv`,
+            path: `${path.dirname(fs.realpathSync(__filename))}/../${config_arduino["data repository"]}/${current_sensor.type}_${timestamp}_${test_env.toVary}${env.temperature}.csv`,
             header: [
                 {id: 'timestamp', title: 'TIMESTAMP'},
                 {id: 'temperature', title: 'TEMPERATURE'},
@@ -115,7 +115,7 @@ module.exports  = class ArduinoSensors  {
             if (ArduinoSensors.count_occurrence(data) !== 6) return
 
             data += '\n'
-            fs.appendFile(fs.readdirSync(`${path.dirname(fs.realpathSync(__filename))}/../${config_arduino["data repository"]}/${current_sensor.type}_${timestamp}_${test_env.toVary}${ ArduinoSensors.getValue(test_env, env) }.csv`), data.toString(), (err) => {
+            fs.appendFile(`${path.dirname(fs.realpathSync(__filename))}/../${config_arduino["data repository"]}/${current_sensor.type}_${timestamp}_${test_env.toVary}${ ArduinoSensors.getValue(test_env, env) }.csv`, data.toString(), (err) => {
                 if (err) console.log(err)
             })
         })
