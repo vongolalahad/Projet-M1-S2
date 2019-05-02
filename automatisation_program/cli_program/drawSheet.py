@@ -46,8 +46,8 @@ def main(data_folder, sheet_folder, sensor):
 
     # current worked directory
     cwd = pathlib.Path(pathlib.Path.cwd())
-    data_folder = cwd.joinpath(data_folder)
-    sheet_folder = cwd.joinpath(sheet_folder)
+    data_folder = pathlib.Path(data_folder).resolve()
+    sheet_folder = pathlib.Path(sheet_folder).resolve()
 
     try:
         iterator = os.scandir(str(data_folder))

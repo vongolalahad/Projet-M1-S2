@@ -18,6 +18,8 @@ require('colors').setTheme({
 })
 const progress = require('cli-progress')
 const { execSync } = require('child_process')
+const path = require('path')
+const fs = require('fs')
 
 const ArduinoSensors = require('./sensor/ArduinoSensors')
 /**
@@ -159,8 +161,8 @@ async function main() {
     }
 
     console.log(colors.measurement(`Start drawing sheets from data`))
-    execSync(`python3 drawSheet.py ${sensor_config["data repository"]} ${sensor_config["sheet repository"]} ${sensor.type}`)
-    console.log(colors.measurement(`End drawing sheets from data`))
+    execSync(`python3 "${path.dirname(fs.realpathSync(__filename))}/drawSheet.py" ${path.dirname(fs.realpathSync(__filename))}/${sensor_config["data repository"]} ${path.dirname(fs.realpathSync(__filename))}/${sensor_config["sheet repository"]} ${sensor.type}`)
+    console.log(colors.measurement(`Finish drawing sheets from data`))
 }
 
 /**
