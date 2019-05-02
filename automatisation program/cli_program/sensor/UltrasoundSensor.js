@@ -77,7 +77,7 @@ module.exports = class UltrasoundSensor extends Sensor{
          * Create the header for the data that will be stocked in the csv file
          */
         const csvWriter = createCsvWriter({
-            path: `${config_sensor["data repository"]}/Ultrasound_${timestamp}_${test_env.toVary}${env.temperature}.csv`,
+            path: `${path.dirname(fs.realpathSync(__filename))}/../${config_sensor["data repository"]}/Ultrasound_${timestamp}_${test_env.toVary}${env.temperature}.csv`,
             header: [
                 {id: 'timestamp', title: 'TIMESTAMP'},
                 {id: 'timestamp_field', title: 'TIMESTAMP FIELD'},
@@ -99,7 +99,7 @@ module.exports = class UltrasoundSensor extends Sensor{
             // If the data is not valid (more or less than 4 information (timestamp, status, distance) received) the data is wrong. So we don't stock it
             if (UltrasoundSensor.count_occurrence(data) !== 4) return
 
-            fs.appendFile(fs.readdirSync(`${path.dirname(fs.realpathSync(__filename))}/../${config_sensor["data repository"]}/Ultrasound_${timestamp}_${test_env.toVary}${ Sensor.getValue(test_env, env) }.csv`), data.toString(), (err) => {
+            fs.appendFile(`${path.dirname(fs.realpathSync(__filename))}/../${config_sensor["data repository"]}/Ultrasound_${timestamp}_${test_env.toVary}${ Sensor.getValue(test_env, env) }.csv`, data.toString(), (err) => {
                 if (err) console.log(err)
             })
         })

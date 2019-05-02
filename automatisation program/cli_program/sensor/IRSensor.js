@@ -64,7 +64,7 @@ module.exports  = class IRSensor extends Sensor {
          * Create the header for the data that will be stocked in the csv file
          */
         const csvWriter = createCsvWriter({
-            path: `${config_sensor["data repository"]}/InfraRed_${timestamp}_${test_env.toVary}${env.temperature}.csv`,
+            path: `${path.dirname(fs.realpathSync(__filename))}/../${config_sensor["data repository"]}/InfraRed_${timestamp}_${test_env.toVary}${env.temperature}.csv`,
             header: [
                 {id: 'timestamp', title: 'TIMESTAMP'},
                 {id: 'status', title: 'STATUS'},
@@ -87,7 +87,7 @@ module.exports  = class IRSensor extends Sensor {
             if (count !== 5) return
 
             data += "\n"
-            fs.appendFile(fs.readdirSync(`${path.dirname(fs.realpathSync(__filename))}/../${config_sensor["data repository"]}/InfraRed_${timestamp}_${test_env.toVary}${Sensor.getValue(test_env, env)}.csv`), data.toString(), (err) => {
+            fs.appendFile(`${path.dirname(fs.realpathSync(__filename))}/../${config_sensor["data repository"]}/InfraRed_${timestamp}_${test_env.toVary}${Sensor.getValue(test_env, env)}.csv`, data.toString(), (err) => {
                 if (err) console.log(err)
             })
         })
